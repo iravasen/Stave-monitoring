@@ -69,7 +69,7 @@ bool hsmonitoring(){
       hsidold=hsid;
       qualdateold=qualdate;
       nchipsmasked = GetMaskedFromConfig(fpath.substr(0, fpath.find("Threshold")-1),"Config_HS.cfg");
-      if(hsid.substr(0,1) != "F") nchipsmasked = 0; //NOTE for Frascati chip masked even if broken (ask!!)
+      if(hsid.substr(0,1) != "Z") nchipsmasked = 0; //NOTE no config file read 
     }
     if(hsid!=hsidold){
       //Get week number
