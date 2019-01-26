@@ -1,0 +1,52 @@
+#include <TSystem.h>
+#include <TCanvas.h>
+#include <TLegend.h>
+#include <TF1.h>
+#include <TH1.h>
+#include <TFile.h>
+#include <TGraphAsymmErrors.h>
+#include <TH2F.h>
+#include <TStyle.h>
+#include <TPaveStats.h>
+#include <TError.h>
+#include <sstream>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <TPie.h>
+#include <TLatex.h>
+#include <TLine.h>
+
+#include "utils/utils.C"
+#include "hs-monitoring.C"
+#include "hs-analysis.C"
+#include "stave-monitoring.C"
+#include "stave-analysis.C"
+
+void StartMonitoring(int year, int thisweek, string todaydate = "DD/MM/YYYY"){
+
+  //First slide
+  TCanvas *c1st = new TCanvas("c1st","c1st");
+  TLatex *latex = new TLatex();
+  latex->SetNDC();
+  latex->SetTextFont(42);
+  latex->SetTextSize(0.08);
+  latex->DrawLatex(0.2,0.8,"Stave production monitoring"); //title
+  latex->SetTextSize(0.055);
+  latex->DrawLatex(0.12, 0.7, "#bf{Ivan Ravasenga}, #it{Politecnico di Torino and I.N.F.N.}"); //author
+  latex->DrawLatex(0.4,0.4,todaydate.c_str());
+  latex->DrawLatex(0.375,0.1,"Stave meeting");
+  c1st->Print("Results/Stave-HS_results.pdf[");
+  c1st->Print("Results/Stave-HS_results.pdf");
+
+  cout<<"Writing HS results to file..."<<endl;
+  hsmonitoring();
+  cout<<"Monitoring HS results..."<<endl;
+  hsanalysis(year, thisweek);
+  cout<<"Writing Stave results to file..."<<endl;
+  stavemonitoring();
+  cout<<"Monitoring Stave results..."<<endl;
+  staveanalysis(year, thisweek);
+
+}
