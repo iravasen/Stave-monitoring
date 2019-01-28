@@ -50,7 +50,7 @@ bool hsanalysis(int year, int thisweek){
     hsvstime[sitenum]->Fill(hsyear==2019 ? (double)week+52. : (double)week);//all hs vs time
     bool detgrade = IsHSDetGrade(chipsok, hsid);
     if(detgrade) hsvstime_detgrade[sitenum]->Fill(hsyear==2019 ? (double)week+52. : (double)week);//det. grade hs vs time
-    if(week==thisweek) thisweekHS.push_back(hsid);
+    if(week==thisweek && hsyear==year) thisweekHS.push_back(hsid);
   }
   infl.close();
 
