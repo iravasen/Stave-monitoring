@@ -31,6 +31,7 @@ bool hsanalysis(int year, int thisweek){
   ifstream infl("hsresults.dat");
   string hsid, qualdate, siteid;
   int chipsok, week, sitenum, categnum, hsyear;
+  vector <string> thisweekHS;
 
   double deadchips[nSites][nCatHS];
   double deadchipsOL[nCatHS] = {0.};
@@ -49,6 +50,7 @@ bool hsanalysis(int year, int thisweek){
     hsvstime[sitenum]->Fill(hsyear==2019 ? (double)week+52. : (double)week);//all hs vs time
     bool detgrade = IsHSDetGrade(chipsok, hsid);
     if(detgrade) hsvstime_detgrade[sitenum]->Fill(hsyear==2019 ? (double)week+52. : (double)week);//det. grade hs vs time
+    if(week==thisweek) thisweekHS.push_back(hsid);
   }
   infl.close();
 
@@ -196,6 +198,16 @@ bool hsanalysis(int year, int thisweek){
   lat->SetTextSize(0.08);
   lat->DrawLatex(0.35,0.5,"HS monitoring");
   cIntro->Print("Results/Stave-HS_results.pdf");
+
+  //HSs of the week
+  TCanvas *cHSweek = new TCanvas("cHSweek", "cHSweek");
+  TPaveText *ptHS = new TPaveText(.05,.042,.28,.18);
+  ptHS->AddText("HSs of the week");
+  ptHS->AddText(" ");
+  for(int i=0; i<thisweekHS.size(); i++){
+    ptHS->AddText(thisweekHS[i].c_str());
+  }
+  cHSweek->Print("Results/Stave-HS_results.pdf");
 
   //Pie charts for OL-HS
   TCanvas *cnvpie_OLsites = new TCanvas("cpie_OLsites", "cpie_OLsites");
