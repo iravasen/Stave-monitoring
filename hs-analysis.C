@@ -201,12 +201,13 @@ bool hsanalysis(int year, int thisweek){
 
   //HSs of the week
   TCanvas *cHSweek = new TCanvas("cHSweek", "cHSweek");
-  TPaveText *ptHS = new TPaveText(.05,.042,.28,.18);
+  TPaveText *ptHS = new TPaveText(.05,.1,.95,.8);
   ptHS->AddText("HSs of the week");
   ptHS->AddText(" ");
-  for(int i=0; i<thisweekHS.size(); i++){
+  for(int i=0; i<(int)thisweekHS.size(); i++){
     ptHS->AddText(thisweekHS[i].c_str());
   }
+  ptHS->Draw();
   cHSweek->Print("Results/Stave-HS_results.pdf");
 
   //Pie charts for OL-HS
