@@ -29,6 +29,7 @@ bool staveanalysis(int year, int thisweek){
   ifstream infl("staveresults.dat");
   string staveid, qualdate, siteid;
   int chipsokHSL, chipsokHSU, week, sitenum, categnum, staveyear;
+  vector <string> thisweekStave;
 
   double nstaveincat[nSites][nCatStave];
   double nstaveincatOL[nCatStave] = {0.};
@@ -47,6 +48,7 @@ bool staveanalysis(int year, int thisweek){
     stavevstime[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//all stave vs time
     bool detgrade = IsStaveDetGrade(categnum, staveid);
     if(detgrade) stavevstime_detgrade[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//det. grade stave vs time
+    if(week==thisweek && staveyear==year) thisweekStave.push_back(staveid);
   }
   infl.close();
 
@@ -205,6 +207,17 @@ bool staveanalysis(int year, int thisweek){
   lat->SetTextSize(0.08);
   lat->DrawLatex(0.35,0.5,"Stave monitoring");
   cIntro->Print("Results/Stave-HS_results.pdf");
+
+  //Staves of the week
+  TCanvas *cStaveweek = new TCanvas("cStaveweek", "cStaveweek");
+  TPaveText *ptStave = new TPaveText(.05,.1,.95,.8);
+  ptStave->AddText("Staves of the week");
+  ptStave->AddText(" ");
+  for(int i=0; i<(int)thisweekStave.size(); i++){
+    ptStave->AddText(thisweekStave[i].c_str());
+  }
+  ptStave->Draw();
+  cStaveweek->Print("Results/Stave-HS_results.pdf");
 
   //Pie charts for OL-Staves
   TCanvas *cnvpie_OLStavesites = new TCanvas("cpie_OLStavesites", "cpie_OLStavesites");
