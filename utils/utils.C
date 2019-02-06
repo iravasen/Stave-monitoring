@@ -79,6 +79,7 @@ string ReadHSID(string fpath){
 
 //Extract Stave id from file path
 string ReadStaveID(string fpath){
+  if(fpath.find("OBHIC") == string::npos) return "-------------";
   string staveid = fpath.substr(fpath.find("OBHIC")-29, 14);
   return staveid;
 }
