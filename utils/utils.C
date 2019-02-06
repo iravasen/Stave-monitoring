@@ -304,10 +304,18 @@ void SetLegendStyle(TLegend *leg){
   leg->SetTextFont(42);
 }
 
-//Set x axis labels
+//Set x axis labels for Stave
 void SetLabels(TH1F *h, int year){
   for(int i=1; i<=h->GetNbinsX(); i++){
     TString label = i>52 ? Form("%d", i-52) : Form("%d",i);
+    h->GetXaxis()->SetBinLabel(i, label.Data());
+  }
+}
+
+//Set x axis labels for Stave
+void SetLabelsHS(TH1F *h, int year){
+  for(int i=1; i<=h->GetNbinsX(); i++){
+    TString label = i>54 ? Form("%d", i-54) : i<3 ? Form("%d",i+46):Form("%d",i-2);
     h->GetXaxis()->SetBinLabel(i, label.Data());
   }
 }

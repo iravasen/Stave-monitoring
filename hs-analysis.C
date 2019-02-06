@@ -15,12 +15,12 @@ bool hsanalysis(int year, int thisweek){
   int nbins;
   double upperedge;
   if(year==2019) {
-    nbins=52+thisweek;
-    upperedge = 52+(double)thisweek+0.5;
+    nbins=52+2+thisweek;//+2 is to include two weeks of 2017
+    upperedge = 52 + 2 +(double)thisweek+0.5;//+2 is to include two weeks of 2017
   }
   else{
-    nbins=thisweek;
-    upperedge=52+(double)thisweek+0.5;
+    nbins=thisweek+2;//+2 is to include two weeks of 2017
+    upperedge=52 + 2 + (double)thisweek+0.5;//+2 is to include two weeks of 2017
   }
 
   for(int i=0; i<nSites; i++){
@@ -47,9 +47,9 @@ bool hsanalysis(int year, int thisweek){
 
     deadchips[sitenum][categnum]++;//dead chips site by site
     if(sitenum!=0) deadchipsOL[categnum]++;
-    hsvstime[sitenum]->Fill(hsyear==2019 ? (double)week+52. : (double)week);//all hs vs time
+    hsvstime[sitenum]->Fill(hsyear==2019 ? (double)week+54. : hsyear==2017 ? (double)week-46 : (double)week+2);//all hs vs time
     bool detgrade = IsHSDetGrade(chipsok, hsid);
-    if(detgrade) hsvstime_detgrade[sitenum]->Fill(hsyear==2019 ? (double)week+52. : (double)week);//det. grade hs vs time
+    if(detgrade) hsvstime_detgrade[sitenum]->Fill(hsyear==2019 ? (double)week+54. : hsyear==2017 ? (double)week-46 : (double)week+2);//det. grade hs vs time
     if(week==thisweek && hsyear==year) thisweekHS.push_back(hsid);
   }
   infl.close();
@@ -110,7 +110,7 @@ bool hsanalysis(int year, int thisweek){
 
   //Make cumulative HS vs time
   double count1=0., count2=0.;
-  int limit = year==2019 ? 52+thisweek : thisweek;
+  int limit = year==2019 ? 52+2+thisweek : thisweek+2;
   for(int isite=0; isite<nSites; isite++){
     cumHSvstime[isite] = (TH1F*)hsvstime[isite]->Clone(Form("cumHSvstime_%s", sitename[isite].c_str()));
     cumHSvstime_detgrade[isite] = (TH1F*)hsvstime_detgrade[isite]->Clone(Form("cumHSvstime_%s_detgrade", sitename[isite].c_str()));
@@ -270,7 +270,7 @@ bool hsanalysis(int year, int thisweek){
   frame->GetXaxis()->SetTitleSize(0.05);
   frame->GetYaxis()->SetTitleSize(0.05);
   frame->GetYaxis()->SetTitleOffset(0.9);
-  SetLabels(frame, year);
+  SetLabelsHS(frame, year);
   for(int i=0; i<nSites; i++)
     cumHSvstime_detgrade[i]->Draw("PL same");
   legsites->Draw();
@@ -307,7 +307,7 @@ bool hsanalysis(int year, int thisweek){
   frameyield->GetXaxis()->SetTitleSize(0.05);
   frameyield->GetYaxis()->SetTitleSize(0.05);
   frameyield->GetYaxis()->SetTitleOffset(0.95);
-  SetLabels(frameyield, year);
+  SetLabelsHS(frameyield, year);
   line90->Draw("same");
   for(int i=0; i<nSites; i++)
     yieldsites[i]->Draw("L HIST same");

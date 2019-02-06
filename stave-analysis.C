@@ -77,12 +77,13 @@ bool staveanalysis(int year, int thisweek){
 
   //Calculate the production rate from week 36 (October 2018) to last week
   double prodrate_detgrade[nSites], prodrate_all[nSites];
+  double weekstart = 40;//beginning of October
   for(int is=0; is<nSites; is++){
-    double upint = year==2019 ? (double)(thisweek-1)+52 : thisweek-1;
-    double nweeks = year==2019 ? 52-44+1+(thisweek-1) : (thisweek-1)-44+1;
+    double upint = year==2019 ? (double)(thisweek-1)+52 : (double)thisweek-1;
+    double nweeks = year==2019 ? (double)52-weekstart+1+(thisweek-1) : (double)(thisweek-1)-weekstart+1;
     nweeks-=2; //remove week 52 of 2018 and week 1 of January (Christmas holiday)
-    prodrate_all[is] = (stavevstime[is]->Integral(44, upint)-stavevstime[is]->GetBinContent(52)-stavevstime[is]->GetBinContent(53)) / nweeks;
-    prodrate_detgrade[is] = (stavevstime_detgrade[is]->Integral(44, upint)-stavevstime_detgrade[is]->GetBinContent(52)-stavevstime_detgrade[is]->GetBinContent(53)) / nweeks;
+    prodrate_all[is] = (stavevstime[is]->Integral(weekstart, upint)-stavevstime[is]->GetBinContent(52)-stavevstime[is]->GetBinContent(53)) / nweeks;
+    prodrate_detgrade[is] = (stavevstime_detgrade[is]->Integral(weekstart, upint)-stavevstime_detgrade[is]->GetBinContent(52)-stavevstime_detgrade[is]->GetBinContent(53)) / nweeks;
 
   }
 
