@@ -79,7 +79,7 @@ string ReadHSID(string fpath){
 
 //Extract Stave id from file path
 string ReadStaveID(string fpath){
-  string staveid = fpath.substr(fpath.find("Stave_Test")+11, 14);
+  string staveid = fpath.substr(fpath.find("OBHIC")-29, 14);
   return staveid;
 }
 
