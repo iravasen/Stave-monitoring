@@ -23,6 +23,8 @@
 #include "hs-analysis.C"
 #include "stave-monitoring.C"
 #include "stave-analysis.C"
+#include "stave-rec-monitoring.C"
+#include "stave-rec-analysis.C"
 
 void StartMonitoring(int year, int thisweek, string todaydate = "DD/MM/YYYY"){
 
@@ -44,9 +46,13 @@ void StartMonitoring(int year, int thisweek, string todaydate = "DD/MM/YYYY"){
   hsmonitoring();
   cout<<"Monitoring HS results..."<<endl;
   hsanalysis(year, thisweek);
-  cout<<"Writing Stave results to file..."<<endl;
+  cout<<"Writing Stave results (QT) to file..."<<endl;
   stavemonitoring();
-  cout<<"Monitoring Stave results..."<<endl;
+  cout<<"Monitoring Stave results (QT)..."<<endl;
   staveanalysis(year, thisweek);
+  cout<<"Writing Stave results (RT) to file..."<<endl;
+  staverecmonitoring();
+  cout<<"Monitoring Stave results (RT)..."<<endl;
+  staverecanalysis(year, thisweek);
 
 }

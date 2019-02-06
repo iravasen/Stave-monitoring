@@ -255,6 +255,7 @@ int GetRepetitions(string filename, string hicid){
   int n=0;
   if(hicid.find("AR000679")!= string::npos) return 1; //error in the DB is present for this HIC
   if(hicid.find("AR001154")!= string::npos) return 1; //error in the DB is present for this HIC
+
   ifstream file(filename.c_str());
   string line;
   while(file>>line){

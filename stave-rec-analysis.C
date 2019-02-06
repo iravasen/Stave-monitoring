@@ -2,7 +2,7 @@
 // MAIN
 //
 
-bool staveanalysis(int year, int thisweek){
+bool staverecanalysis(int year, int thisweek){
 
   gStyle->SetOptStat(0000);
 
@@ -22,11 +22,11 @@ bool staveanalysis(int year, int thisweek){
     upperedge=52+(double)thisweek+0.5;
   }
   for(int i=0; i<nSites; i++){
-    stavevstime[i] = new TH1F(Form("%s_Stave_vs_time", sitename[i].c_str()), Form("%s - Stave vs time", sitename[i].c_str()), nbins, 0.5, upperedge);
-    stavevstime_detgrade[i] = new TH1F(Form("%s_Stave_vs_time_dg", sitename[i].c_str()), Form("%s - Stave vs time (det. grade)", sitename[i].c_str()), nbins, 0.5, upperedge);
+    stavevstime[i] = new TH1F(Form("%s_Stave_vs_time", sitename[i].c_str()), Form("%s - Stave Rec. vs time", sitename[i].c_str()), nbins, 0.5, upperedge);
+    stavevstime_detgrade[i] = new TH1F(Form("%s_Stave_vs_time_dg", sitename[i].c_str()), Form("%s - Stave Rec. vs time (det. grade)", sitename[i].c_str()), nbins, 0.5, upperedge);
   }
   //Read file extracting the number of working chips HS by HS
-  ifstream infl("staveresults.dat");
+  ifstream infl("staveresults_rec.dat");
   string staveid, qualdate, siteid;
   int chipsokHSL, chipsokHSU, week, sitenum, categnum, staveyear;
   vector <string> thisweekStave;
@@ -75,7 +75,7 @@ bool staveanalysis(int year, int thisweek){
   }
   yieldDetGradeOL=num/sum*100.;
 
-  //Calculate the production rate from week 36 (October 2018) to last week
+  //Calculate the qualification rate from week 40 (October 2018) to last week
   double prodrate_detgrade[nSites], prodrate_all[nSites];
   double weekstart = 40;//beginning of October
   for(int is=0; is<nSites; is++){
@@ -84,7 +84,6 @@ bool staveanalysis(int year, int thisweek){
     nweeks-=2; //remove week 52 of 2018 and week 1 of January (Christmas holiday)
     prodrate_all[is] = (stavevstime[is]->Integral(weekstart, upint)-stavevstime[is]->GetBinContent(52)-stavevstime[is]->GetBinContent(53)) / nweeks;
     prodrate_detgrade[is] = (stavevstime_detgrade[is]->Integral(weekstart, upint)-stavevstime_detgrade[is]->GetBinContent(52)-stavevstime_detgrade[is]->GetBinContent(53)) / nweeks;
-
   }
 
   //Remove categories with 0 counts (bad labels in TPie)
@@ -161,8 +160,8 @@ bool staveanalysis(int year, int thisweek){
   yieldOL->Scale(100.);
 
   //Plot with the total number of HS and HS DG for each site
-  TH1F *hStave = new TH1F("hStavetotal", "All Stave", nSites, 0.5, 5.5);
-  TH1F *hStave_dg = new TH1F("hStavetotalDG", "Det. Grade Stave", nSites, 0.5, 5.5);
+  TH1F *hStave = new TH1F("hStavetotal", "All Stave @CERN", nSites, 0.5, 5.5);
+  TH1F *hStave_dg = new TH1F("hStavetotalDG", "Det. Grade Stave @CERN", nSites, 0.5, 5.5);
   for(int is=0; is<nSites; is++){
     hStave->SetBinContent(is+1, cumStavevstime[is]->GetBinContent(cumStavevstime[is]->GetNbinsX()));
     hStave_dg->SetBinContent(is+1, cumStavevstime_detgrade[is]->GetBinContent(cumStavevstime_detgrade[is]->GetNbinsX()));
@@ -174,9 +173,9 @@ bool staveanalysis(int year, int thisweek){
 
   //Define pie charts and their style
   TPie *pie[nSites];
-  TPie *pieOL = new TPie("ol-stave", "Stave - OL", (int)finalnstaveincatOL.size(), &finalnstaveincatOL[0], &colOL[0]);
+  TPie *pieOL = new TPie("ol-stave", "Stave @CERN - OL", (int)finalnstaveincatOL.size(), &finalnstaveincatOL[0], &colOL[0]);
   for(int isite=0; isite<nSites; isite++){
-    pie[isite] = new TPie(sitename[isite].c_str(), Form("Stave - %s",!isite ? "ML" : sitename[isite].c_str()), (int)finalnstaveincat[isite].size(), &finalnstaveincat[isite][0], &finalcol[isite][0]);
+    pie[isite] = new TPie(sitename[isite].c_str(), Form("Stave - %s @CERN",!isite ? "ML" : sitename[isite].c_str()), (int)finalnstaveincat[isite].size(), &finalnstaveincat[isite][0], &finalcol[isite][0]);
     for(int ilab=0; ilab<(int)finallab[isite].size(); ilab++)
       pie[isite]->SetEntryLabel(ilab, finallab[isite][ilab].Data());
     for(int ilab=0; ilab<(int)finallabOL.size(); ilab++)
@@ -207,13 +206,13 @@ bool staveanalysis(int year, int thisweek){
   lat->SetNDC();
   lat->SetTextFont(42);
   lat->SetTextSize(0.08);
-  lat->DrawLatex(0.35,0.5,"Stave monitoring");
+  lat->DrawLatex(0.25,0.5,"Stave reception @CERN");
   cIntro->Print("Results/Stave-HS_results.pdf");
 
   //Staves of the week
   TCanvas *cStaveweek = new TCanvas("cStaveweek", "cStaveweek");
   TPaveText *ptStave = new TPaveText(.05,.1,.95,.8);
-  ptStave->AddText("Staves of the week");
+  ptStave->AddText("Staves qualified this week");
   ptStave->AddText(" ");
   for(int i=0; i<(int)thisweekStave.size(); i++){
     ptStave->AddText(thisweekStave[i].c_str());
@@ -222,7 +221,7 @@ bool staveanalysis(int year, int thisweek){
   cStaveweek->Print("Results/Stave-HS_results.pdf");
 
   //Pie charts for OL-Staves
-  TCanvas *cnvpie_OLStavesites = new TCanvas("cpie_OLStavesites", "cpie_OLStavesites");
+  /*TCanvas *cnvpie_OLStavesites = new TCanvas("cpie_OLStavesites", "cpie_OLStavesites");
   cnvpie_OLStavesites->Divide(2,2);
   lat->SetTextSize(0.06);
   lat->SetTextColor(kGreen+2);
@@ -231,7 +230,7 @@ bool staveanalysis(int year, int thisweek){
     pie[isite]->Draw("3d nol sc <");
     lat->DrawLatex(0.75,0.8,Form("%.2f %% ok",yieldDetGrade[isite]));
   }
-  cnvpie_OLStavesites->Print("Results/Stave-HS_results.pdf");
+  cnvpie_OLStavesites->Print("Results/Stave-HS_results.pdf");*/
 
   //Pie charts OL(sum) and ML
   TCanvas *cnvpie_OLML_Stave = new TCanvas("cpieOLMLStave", "cpieOLMLStave");
@@ -245,7 +244,7 @@ bool staveanalysis(int year, int thisweek){
   cnvpie_OLML_Stave->Print("Results/Stave-HS_results.pdf");
 
   //Total number of Stave and Stave_DG for each site
-  TCanvas *cStavetot = new TCanvas("cStavetot", "cStavetot");
+  /*TCanvas *cStavetot = new TCanvas("cStavetot", "cStavetot");
   cStavetot->Divide(2,1);
   cStavetot->cd(1);
   cStavetot->GetPad(1)->SetGridy();
@@ -255,7 +254,7 @@ bool staveanalysis(int year, int thisweek){
   cStavetot->GetPad(2)->SetGridy();
   hStave_dg->SetLineWidth(2);
   hStave_dg->Draw("HIST TEXT0");
-  cStavetot->Print("Results/Stave-HS_results.pdf");
+  cStavetot->Print("Results/Stave-HS_results.pdf");*/
 
   //det. grade stave vs time & total (OL and ML) det. grade Stave vs time
   TCanvas *cStavevstime = new TCanvas("cStavevstime", "cStavevstime");
@@ -275,7 +274,7 @@ bool staveanalysis(int year, int thisweek){
 
   cStavevstime->cd(1);
   cStavevstime->GetPad(1)->SetMargin(0.099,0.1,0.2589,0.18);
-  TH1F *frame = cStavevstime->GetPad(1)->DrawFrame(0., 0., upperedge, cumStavevstime[0]->GetMaximum()+5, "Det. grade Stave vs time; Week; #Stave");
+  TH1F *frame = cStavevstime->GetPad(1)->DrawFrame(0., 0., upperedge, cumStavevstime[0]->GetMaximum()+5, "Det. grade Stave vs time @CERN; Week; #Stave");
   frame->SetBins(nbins, 0.5, upperedge);
   frame->GetXaxis()->SetTickLength(0.015);
   frame->GetXaxis()->SetRangeUser(27, upperedge); //for better visibility
@@ -337,10 +336,10 @@ bool staveanalysis(int year, int thisweek){
 
   cStaveYieldvstime->Print("Results/Stave-HS_results.pdf");
 
-  //Draw a table with the production rate
+  //Draw a table with the qualification rate
   TCanvas *cprodrate = new TCanvas("cprodrate", "cprodrate");
   TPaveText *pt = new TPaveText(.05,.1,.95,.8);
-  pt->AddText("Production rate (October 2018 - prev. week)**");
+  pt->AddText("Qualification rate (October 2018 - prev. week)**");
   for(int is=0; is<nSites; is++){
     pt->AddText(Form("%s: %.2f(all) -- %.2f(DG)", sitename[is].c_str(), prodrate_all[is], prodrate_detgrade[is]));
   }
@@ -352,6 +351,7 @@ bool staveanalysis(int year, int thisweek){
 
   pt->Draw();
   cprodrate->Print("Results/Stave-HS_results.pdf");
+  cprodrate->Print("Results/Stave-HS_results.pdf]");
 
   return 1;
 }
