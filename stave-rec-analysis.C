@@ -77,7 +77,7 @@ bool staverecanalysis(int year, int thisweek){
 
   //Calculate the qualification rate from week 40 (October 2018) to last week
   double prodrate_detgrade[nSites], prodrate_all[nSites];
-  double weekstart = 40;//beginning of October
+  double weekstart = 49;//beginning of October
   for(int is=0; is<nSites; is++){
     double upint = year==2019 ? (double)(thisweek-1)+52 : (double)thisweek-1;
     double nweeks = year==2019 ? (double)52-weekstart+1+(thisweek-1) : (double)(thisweek-1)-weekstart+1;
@@ -221,7 +221,7 @@ bool staverecanalysis(int year, int thisweek){
   cStaveweek->Print("Results/Stave-HS_results.pdf");
 
   //Pie charts for OL-Staves
-  /*TCanvas *cnvpie_OLStavesites = new TCanvas("cpie_OLStavesites", "cpie_OLStavesites");
+  TCanvas *cnvpie_OLStavesites = new TCanvas("cpie_OLStavesites", "cpie_OLStavesites");
   cnvpie_OLStavesites->Divide(2,2);
   lat->SetTextSize(0.06);
   lat->SetTextColor(kGreen+2);
@@ -230,7 +230,7 @@ bool staverecanalysis(int year, int thisweek){
     pie[isite]->Draw("3d nol sc <");
     lat->DrawLatex(0.75,0.8,Form("%.2f %% ok",yieldDetGrade[isite]));
   }
-  cnvpie_OLStavesites->Print("Results/Stave-HS_results.pdf");*/
+  //cnvpie_OLStavesites->Print("Results/Stave-HS_results.pdf");
 
   //Pie charts OL(sum) and ML
   TCanvas *cnvpie_OLML_Stave = new TCanvas("cpieOLMLStave", "cpieOLMLStave");
@@ -244,7 +244,7 @@ bool staverecanalysis(int year, int thisweek){
   cnvpie_OLML_Stave->Print("Results/Stave-HS_results.pdf");
 
   //Total number of Stave and Stave_DG for each site
-  /*TCanvas *cStavetot = new TCanvas("cStavetot", "cStavetot");
+  TCanvas *cStavetot = new TCanvas("cStavetot", "cStavetot");
   cStavetot->Divide(2,1);
   cStavetot->cd(1);
   cStavetot->GetPad(1)->SetGridy();
@@ -254,7 +254,7 @@ bool staverecanalysis(int year, int thisweek){
   cStavetot->GetPad(2)->SetGridy();
   hStave_dg->SetLineWidth(2);
   hStave_dg->Draw("HIST TEXT0");
-  cStavetot->Print("Results/Stave-HS_results.pdf");*/
+  //cStavetot->Print("Results/Stave-HS_results.pdf");
 
   //det. grade stave vs time & total (OL and ML) det. grade Stave vs time
   TCanvas *cStavevstime = new TCanvas("cStavevstime", "cStavevstime");
@@ -334,12 +334,12 @@ bool staverecanalysis(int year, int thisweek){
   yieldOL->Draw("L HIST same");
   legOLML->Draw();
 
-  cStaveYieldvstime->Print("Results/Stave-HS_results.pdf");
+  //cStaveYieldvstime->Print("Results/Stave-HS_results.pdf");
 
   //Draw a table with the qualification rate
   TCanvas *cprodrate = new TCanvas("cprodrate", "cprodrate");
   TPaveText *pt = new TPaveText(.05,.1,.95,.8);
-  pt->AddText("Qualification rate (October 2018 - prev. week)**");
+  pt->AddText("Qualification rate (December 2018 - prev. week)**");
   for(int is=0; is<nSites; is++){
     pt->AddText(Form("%s: %.2f(all) -- %.2f(DG)", sitename[is].c_str(), prodrate_all[is], prodrate_detgrade[is]));
   }
