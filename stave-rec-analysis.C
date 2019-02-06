@@ -173,7 +173,7 @@ bool staverecanalysis(int year, int thisweek){
 
   //Define pie charts and their style
   TPie *pie[nSites];
-  TPie *pieOL = new TPie("ol-stave", "Stave @CERN - OL", (int)finalnstaveincatOL.size(), &finalnstaveincatOL[0], &colOL[0]);
+  TPie *pieOL = new TPie("ol-stave", "Stave - OL @CERN", (int)finalnstaveincatOL.size(), &finalnstaveincatOL[0], &colOL[0]);
   for(int isite=0; isite<nSites; isite++){
     pie[isite] = new TPie(sitename[isite].c_str(), Form("Stave - %s @CERN",!isite ? "ML" : sitename[isite].c_str()), (int)finalnstaveincat[isite].size(), &finalnstaveincat[isite][0], &finalcol[isite][0]);
     for(int ilab=0; ilab<(int)finallab[isite].size(); ilab++)
@@ -254,7 +254,7 @@ bool staverecanalysis(int year, int thisweek){
   cStavetot->GetPad(2)->SetGridy();
   hStave_dg->SetLineWidth(2);
   hStave_dg->Draw("HIST TEXT0");
-  //cStavetot->Print("Results/Stave-HS_results.pdf");
+  cStavetot->Print("Results/Stave-HS_results.pdf");
 
   //det. grade stave vs time & total (OL and ML) det. grade Stave vs time
   TCanvas *cStavevstime = new TCanvas("cStavevstime", "cStavevstime");
