@@ -47,6 +47,7 @@ bool staveanalysis(int year, int thisweek){
     if(sitenum!=0) nstaveincatOL[categnum]++;
     stavevstime[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//all stave vs time
     bool detgrade = IsStaveDetGrade(categnum, staveid);
+    if(staveid=="T-OL-Stave-004") detgrade = kTRUE; //exception for T-OL-Stave-004 since mounted already in the detector
     if(detgrade) stavevstime_detgrade[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//det. grade stave vs time
     if(week==thisweek && staveyear==year) thisweekStave.push_back(staveid);
   }

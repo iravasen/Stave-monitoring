@@ -116,12 +116,12 @@ bool stavemonitoring(){
     if(hsid.find("-U-")!=string::npos){//hs upper
       nchipsokHSU+=nchipsokHIC;
       countU++;
-      if(countU==1) nchipsmaskedHSU = GetMaskedFromConfig(fpath.substr(0, fpath.find("Threshold")-1),"Config_HS.cfg");
+      if(countU==20) nchipsmaskedHSU = GetMaskedFromConfig(fpath.substr(0, fpath.find("Threshold")-1),"Config_HS.cfg");//NOTE: no config file read out
     }
     else{//hs lower
       nchipsokHSL+=nchipsokHIC;
       countL++;
-      if(countL==1) nchipsmaskedHSL = GetMaskedFromConfig(fpath.substr(0, fpath.find("Threshold")-1),"Config_HS.cfg");
+      if(countL==20) nchipsmaskedHSL = GetMaskedFromConfig(fpath.substr(0, fpath.find("Threshold")-1),"Config_HS.cfg");//NOTE: no config file read out
     }
 
   }
