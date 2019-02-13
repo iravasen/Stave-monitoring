@@ -313,7 +313,7 @@ bool staverecanalysis(int year, int thisweek){
   line90->SetLineColor(kGray+2);
   cStaveYieldvstime->cd(1);
   cStaveYieldvstime->GetPad(1)->SetMargin(0.099,0.1,0.1,0.18);
-  TH1F *frameyield = cStaveYieldvstime->GetPad(1)->DrawFrame(0., 0., upperedge, 105, "Yield vs time; Week; Yield");
+  TH1F *frameyield = cStaveYieldvstime->GetPad(1)->DrawFrame(0., 0., upperedge, 105, "Stave yield vs time @CERN; Week; Yield");
   frameyield->SetBins(nbins, 0.5, upperedge);
   frameyield->GetXaxis()->SetTickLength(0.015);
   frameyield->GetXaxis()->SetRangeUser(27, upperedge); //for better visibility
