@@ -30,6 +30,7 @@ bool staverecanalysis(int year, int thisweek){
   string staveid, qualdate, siteid;
   int chipsokHSL, chipsokHSU, week, sitenum, categnum, staveyear;
   vector <string> thisweekStave;
+  vector <int> deadchtwU, deadchtwL;
 
   double nstaveincat[nSites][nCatStave];
   double nstaveincatOL[nCatStave] = {0.};
@@ -49,7 +50,11 @@ bool staverecanalysis(int year, int thisweek){
     bool detgrade = IsStaveDetGrade(categnum, staveid);
     if(staveid=="T-OL-Stave-004") detgrade = kTRUE; //exception for T-OL-Stave-004 since mounted already in the detector
     if(detgrade) stavevstime_detgrade[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//det. grade stave vs time
-    if(week==thisweek && staveyear==year) thisweekStave.push_back(staveid);
+    if(week==thisweek && staveyear==year){
+      thisweekStave.push_back(staveid);
+      deadchtwU.push_back(siteid=="B" ? 56-chipsokHSU : 98-chipsokHSU);
+      deadchtwL.push_back(siteid=="B" ? 56-chipsokHSL : 98-chipsokHSL);
+    }
   }
   infl.close();
 
@@ -215,7 +220,7 @@ bool staverecanalysis(int year, int thisweek){
   ptStave->AddText("Staves qualified this week");
   ptStave->AddText(" ");
   for(int i=0; i<(int)thisweekStave.size(); i++){
-    ptStave->AddText(thisweekStave[i].c_str());
+    ptStave->AddText(Form("%s: (U,L)=(%d, %d)", thisweekStave[i].c_str(), deadchtwU[i], deadchtwL[i]));
   }
   ptStave->Draw();
   cStaveweek->Print("Results/Stave-HS_results.pdf");

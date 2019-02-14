@@ -32,6 +32,7 @@ bool hsanalysis(int year, int thisweek){
   string hsid, qualdate, siteid;
   int chipsok, week, sitenum, categnum, hsyear;
   vector <string> thisweekHS;
+  vector <int> deadchtw;
 
   double deadchips[nSites][nCatHS];
   double deadchipsOL[nCatHS] = {0.};
@@ -50,7 +51,10 @@ bool hsanalysis(int year, int thisweek){
     hsvstime[sitenum]->Fill(hsyear==2019 ? (double)week+54. : hsyear==2017 ? (double)week-46 : (double)week+2);//all hs vs time
     bool detgrade = IsHSDetGrade(chipsok, hsid);
     if(detgrade) hsvstime_detgrade[sitenum]->Fill(hsyear==2019 ? (double)week+54. : hsyear==2017 ? (double)week-46 : (double)week+2);//det. grade hs vs time
-    if(week==thisweek && hsyear==year) thisweekHS.push_back(hsid);
+    if(week==thisweek && hsyear==year) {
+      thisweekHS.push_back(hsid);
+      deadchtw.push_back(siteid=="B" ? 56-chipsok : 98-chipsok);
+    }
   }
   infl.close();
 
@@ -205,7 +209,7 @@ bool hsanalysis(int year, int thisweek){
   ptHS->AddText("HSs of the week");
   ptHS->AddText(" ");
   for(int i=0; i<(int)thisweekHS.size(); i++){
-    ptHS->AddText(thisweekHS[i].c_str());
+    ptHS->AddText(Form("%s: %d bad chips",thisweekHS[i].c_str(), deadchtw[i]));
   }
   ptHS->Draw();
   cHSweek->Print("Results/Stave-HS_results.pdf");
