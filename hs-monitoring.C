@@ -18,10 +18,10 @@ bool hsmonitoring(){
   ofstream outfl("hsresults.dat");
 
   //Black list: HSs that are in the DB but have some problems: missing HIC QT, missing attachments (added manually below)
-  string blacklist = "F-OL-HS-U-014, A-OL-HS-U-009, D-OL-HS-L-004, D-OL-HS-L-003, A-OL-HS-U-003, F-OL-HS-L-010, F-OL-HS-U-001, T-OL-HS-L-018, D-OL-HS-U-008, B-ML-HS-L-020, T-OL-HS-U-021, D-OL-HS-U-001, D-OL-HS-L-001, D-OL-HS-U-008, A-OL-HS-U-001, A-OL-HS-L-001, A-OL-HS-L-002, A-OL-HS-U-002, A-OL-HS-L-004, A-OL-HS-U-008, B-ML-HS-U-001, B-ML-HS-L-001, B-ML-HS-U-007, B-ML-HS-L-020, F-OL-HS-L-010, F-OL-HS-U-001, D-OL-HS-L-013";
+  string blacklist = "F-OL-HS-U-014, A-OL-HS-U-009, D-OL-HS-L-004, D-OL-HS-L-003, A-OL-HS-U-003, F-OL-HS-L-010, F-OL-HS-U-001, T-OL-HS-L-018, D-OL-HS-U-008, B-ML-HS-L-020, T-OL-HS-U-021, D-OL-HS-U-001, D-OL-HS-L-001, D-OL-HS-U-008, A-OL-HS-U-001, A-OL-HS-L-001, A-OL-HS-L-002, A-OL-HS-U-002, A-OL-HS-L-004, A-OL-HS-U-008, B-ML-HS-U-001, B-ML-HS-L-001, B-ML-HS-U-007, B-ML-HS-L-020, F-OL-HS-L-010, F-OL-HS-U-001, D-OL-HS-L-013, D-OL-HS-U-013";
 
   //Add old HS, HS without attachments by hand (from excel)
-  const int nManual = 28;
+  const int nManual = 29;
   string shsmanual[nManual] = {
     "T-OL-HS-U-002 91 1/12/2017 48",
     "T-OL-HS-L-002 97 10/1/2018 2",
@@ -50,7 +50,8 @@ bool hsmonitoring(){
     "F-OL-HS-L-010 98 14/11/2018 46",
     "F-OL-HS-U-001 97 13/9/2018 37",
     "F-OL-HS-U-014 98 22/1/2019 4",
-    "D-OL-HS-L-013 98 20/2/2019 8"
+    "D-OL-HS-L-013 98 20/2/2019 8",
+    "D-OL-HS-U-013 98 18/2/2019 8"
     };
   for(int i=0; i<nManual; i++)
     outfl<<shsmanual[i]<<endl;
@@ -66,13 +67,13 @@ bool hsmonitoring(){
     hsid = ReadHSID(fpath);
     hicid = ReadHICID(fpath);
     if(blacklist.find(hsid)!=std::string::npos) continue; //exclude HS that are added manually for DB issues
-    if(fpath.find("---------")==string::npos){//if not at the end of the file
+   /* if(fpath.find("---------")==string::npos){//if not at the end of the file
        int nrep = GetRepetitions("hsfiles.dat", hicid);
        for(int irep=0; irep<nrep-1; irep++)
          infl>>nextpath;
        if(nrep>1)
          fpath=nextpath;
-    }
+    }*/
 
     qualdate = ReadQualDate(fpath);
     count++;
