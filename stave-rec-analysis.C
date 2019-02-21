@@ -29,8 +29,8 @@ bool staverecanalysis(int year, int thisweek){
   ifstream infl("staveresults_rec.dat");
   string staveid, qualdate, siteid;
   int chipsokHSL, chipsokHSU, week, sitenum, categnum, staveyear;
-  vector <string> thisweekStave;
-  vector <int> deadchtwU, deadchtwL;
+  vector <string> thisweekStave, prevweekStave;
+  vector <int> deadchtwU, deadchtwL, deadchpwU, deadchpwL;
 
   double nstaveincat[nSites][nCatStave];
   double nstaveincatOL[nCatStave] = {0.};
@@ -54,6 +54,11 @@ bool staverecanalysis(int year, int thisweek){
       thisweekStave.push_back(staveid);
       deadchtwU.push_back(siteid=="B" ? 56-chipsokHSU : 98-chipsokHSU);
       deadchtwL.push_back(siteid=="B" ? 56-chipsokHSL : 98-chipsokHSL);
+    }
+    if(week==thisweek-1 && staveyear==year){
+      prevweekStave.push_back(staveid);
+      deadchpwU.push_back(siteid=="B" ? 56-chipsokHSU : 98-chipsokHSU);
+      deadchpwL.push_back(siteid=="B" ? 56-chipsokHSL : 98-chipsokHSL);
     }
   }
   infl.close();
@@ -217,6 +222,13 @@ bool staverecanalysis(int year, int thisweek){
   //Staves of the week
   TCanvas *cStaveweek = new TCanvas("cStaveweek", "cStaveweek");
   TPaveText *ptStave = new TPaveText(.05,.1,.95,.8);
+  ptStave->AddText("Staves qualified in the previous week");
+  ptStave->AddText(" ");
+  for(int i=0; i<(int)prevweekStave.size(); i++){
+    ptStave->AddText(Form("%s: (U,L)=(%d, %d)", prevweekStave[i].c_str(), deadchpwU[i], deadchpwL[i]));
+  }
+  ptStave->AddText(" ");
+  ptStave->AddText(" ");
   ptStave->AddText("Staves qualified this week");
   ptStave->AddText(" ");
   for(int i=0; i<(int)thisweekStave.size(); i++){

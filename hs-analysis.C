@@ -31,8 +31,8 @@ bool hsanalysis(int year, int thisweek){
   ifstream infl("hsresults.dat");
   string hsid, qualdate, siteid;
   int chipsok, week, sitenum, categnum, hsyear;
-  vector <string> thisweekHS;
-  vector <int> deadchtw;
+  vector <string> thisweekHS, prevweekHS;
+  vector <int> deadchtw, deadchpw;
 
   double deadchips[nSites][nCatHS];
   double deadchipsOL[nCatHS] = {0.};
@@ -54,6 +54,10 @@ bool hsanalysis(int year, int thisweek){
     if(week==thisweek && hsyear==year) {
       thisweekHS.push_back(hsid);
       deadchtw.push_back(siteid=="B" ? 56-chipsok : 98-chipsok);
+    }
+    if(week==thisweek-1 && hsyear==year) {
+      prevweekHS.push_back(hsid);
+      deadchpw.push_back(siteid=="B" ? 56-chipsok : 98-chipsok);
     }
   }
   infl.close();
@@ -206,7 +210,14 @@ bool hsanalysis(int year, int thisweek){
   //HSs of the week
   TCanvas *cHSweek = new TCanvas("cHSweek", "cHSweek");
   TPaveText *ptHS = new TPaveText(.05,.1,.95,.8);
-  ptHS->AddText("HSs of the week");
+  ptHS->AddText("HSs of previous week");
+  ptHS->AddText(" ");
+  for(int i=0; i<(int)prevweekHS.size(); i++){
+    ptHS->AddText(Form("%s: %d bad chips",prevweekHS[i].c_str(), deadchpw[i]));
+  }
+  ptHS->AddText(" ");
+  ptHS->AddText(" ");
+  ptHS->AddText("HSs of this week");
   ptHS->AddText(" ");
   for(int i=0; i<(int)thisweekHS.size(); i++){
     ptHS->AddText(Form("%s: %d bad chips",thisweekHS[i].c_str(), deadchtw[i]));
