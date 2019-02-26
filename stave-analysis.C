@@ -287,7 +287,9 @@ bool staveanalysis(int year, int thisweek){
   SetLegendStyle(legOLML);
   legOLML->SetNColumns(2);
   legOLML->SetTextSize(0.042);
-  legOLML->AddEntry(cumStavevstime[0], "ML", "l");
+  legOLML->AddEntry(cumStavevstime[0], "ML (all)", "l");
+  legOLML->AddEntry(cumStavevstime_detgrade[0],"ML (DG)","l");
+  legOLML->AddEntry(cumOLStavevstime,"OL (all)","l");
   legOLML->AddEntry(cumOLStavevstime_detgrade, "OL", "l");
 
   cStavevstime->cd(1);
@@ -316,17 +318,29 @@ bool staveanalysis(int year, int thisweek){
   TH1F *frame2 = (TH1F*)frame->Clone("frame2");
   frame2->Draw();
   frame2->GetXaxis()->SetRangeUser(27, upperedge); //for better visibility
-  frame2->GetYaxis()->SetRangeUser(0., cumStavevstime_detgrade[1]->GetMaximum()+cumStavevstime_detgrade[2]->GetMaximum()+cumStavevstime_detgrade[3]->GetMaximum()+cumStavevstime_detgrade[4]->GetMaximum()+8);
+  frame2->GetYaxis()->SetRangeUser(0., cumStavevstime[1]->GetMaximum()+cumStavevstime[2]->GetMaximum()+cumStavevstime[3]->GetMaximum()+cumStavevstime[4]->GetMaximum()+8);
+
+  TCanvas *pippo = new TCanvas("pippo", "pippo");
+  frame2->Draw();
+  cumOLStavevstime->SetLineColor(kRed);
+  cumOLStavevstime->SetLineStyle(9);
+  cumOLStavevstime->SetLineWidth(2);
+  cumOLStavevstime->Draw("PL same");
+  cumStavevstime[0]->SetLineColor(kBlack);
+  cumStavevstime[0]->SetLineStyle(9);
+  cumStavevstime[0]->SetLineWidth(2);
+  cumStavevstime[0]->Draw("PL same");
   cumStavevstime_detgrade[0]->Draw("PL same");
   cumOLStavevstime_detgrade->Draw("PL same");
   legOLML->Draw();
+  pippo->Print("Results/Stave-HS_results.pdf");
 
   cStavevstime->Print("Results/Stave-HS_results.pdf");
 
   //Draw yield
   TCanvas *cStaveYieldvstime = new TCanvas("cStaveYieldvstime", "cStaveYieldvstime");
   cStaveYieldvstime->Divide(2,1);
-  TLine *line90 = new TLine(yieldOL->GetBinLowEdge(1), 90, upperedge, 90);
+  TLine *line90 = new TLine(27, 90, upperedge, 90);
   line90->SetLineStyle(2);
   line90->SetLineColor(kGray+2);
   cStaveYieldvstime->cd(1);
@@ -351,6 +365,16 @@ bool staveanalysis(int year, int thisweek){
   yieldsites[0]->Draw("L HIST same");
   yieldOL->Draw("L HIST same");
   legOLML->Draw();
+
+  TCanvas *pippo2 = new TCanvas("pippo2","pippo2");
+  pippo2->cd();
+  frameyield->Draw();
+  cumStavevstime[0]->SetLineStyle(1);
+  line90->Draw("same");
+  for(int i=0; i<nSites; i++)
+    yieldsites[i]->Draw("L HIST same");
+  legsites->Draw();
+  pippo2->Print("Results/Stave-HS_results.pdf");
 
   cStaveYieldvstime->Print("Results/Stave-HS_results.pdf");
 
