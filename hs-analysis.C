@@ -263,7 +263,7 @@ bool hsanalysis(int year, int thisweek){
 
   //det. grade HS vs time & total (OL and ML) det. grade HS vs time
   TCanvas *cHSvstime = new TCanvas("cHSvstime", "cHSvstime");
-  cHSvstime->Divide(2,1);
+  cHSvstime->Divide(1,2);
   TLegend *legsites = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
   SetLegendStyle(legsites);
   legsites->SetNColumns(2);
