@@ -188,10 +188,13 @@ bool hsanalysis(int year, int thisweek){
   //Style for hs vs time plots and yield vs time plots
   for(int isite=0; isite<nSites; isite++){
     SetStyleSite(cumHSvstime[isite], color_site[isite]);
+    cumHSvstime[isite]->SetLineStyle(9);
     SetStyleSite(cumHSvstime_detgrade[isite], color_site[isite]);
     SetStyleSite(yieldsites[isite], color_site[isite]);
   }
   SetStyleSite(cumOLHSvstime_detgrade, 2);
+  SetStyleSite(cumOLHSvstime, 2);
+  cumOLHSvstime->SetLineStyle(9);
   SetStyleSite(yieldOL, 2);
 
   //////////////////////////////////////////////////
@@ -262,24 +265,23 @@ bool hsanalysis(int year, int thisweek){
   cHStot->Print("Results/Stave-HS_results.pdf");
 
   //det. grade HS vs time & total (OL and ML) det. grade HS vs time
-  TCanvas *cHSvstime = new TCanvas("cHSvstime", "cHSvstime");
-  cHSvstime->Divide(1,2);
-  TLegend *legsites = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
+  TCanvas *cHSvstime1 = new TCanvas("cHSvstime1", "cHSvstime1");
+  TLegend *legsites = new TLegend(0.184, 0.832, 0.8989, 0.929);
   SetLegendStyle(legsites);
   legsites->SetNColumns(2);
   legsites->SetTextSize(0.042);
   for(int isite=0; isite<nSites; isite++)
-    legsites->AddEntry(cumHSvstime[isite], sitename[isite].c_str(), "l");
+    legsites->AddEntry(cumHSvstime_detgrade[isite], sitename[isite].c_str(), "l");
   TLegend *legOLML = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
   SetLegendStyle(legOLML);
   legOLML->SetNColumns(2);
   legOLML->SetTextSize(0.042);
-  legOLML->AddEntry(cumHSvstime[0], "ML", "l");
-  legOLML->AddEntry(cumOLHSvstime_detgrade, "OL", "l");
-
-  cHSvstime->cd(1);
-  cHSvstime->GetPad(1)->SetMargin(0.099,0.1,0.2589,0.18);
-  TH1F *frame = cHSvstime->GetPad(1)->DrawFrame(0., 0., thisweek+0.5, cumHSvstime[0]->GetMaximum()+5, "Det. grade HS vs time; Week; #HS");
+  legOLML->AddEntry(cumHSvstime[0], "ML(all)", "l");
+  legOLML->AddEntry(cumHSvstime_detgrade[0], "ML(DG)","l");
+  legOLML->AddEntry(cumOLHSvstime, "OL(all)", "l");
+  legOLML->AddEntry(cumOLHSvstime_detgrade, "OL(DG)", "l");
+  cHSvstime1->SetMargin(0.099,0.1,0.2589,0.18);
+  TH1F *frame = cHSvstime1->DrawFrame(0., 0., thisweek+0.5, cumHSvstime[0]->GetMaximum()+5, "Det. grade HS vs time; Week; #HS");
   frame->SetBins(nbins, 0.5, upperedge);
   frame->GetXaxis()->SetTickLength(0.015);
   frame->GetXaxis()->SetTitleSize(0.05);
@@ -288,35 +290,42 @@ bool hsanalysis(int year, int thisweek){
   SetLabelsHS(frame, year);
   for(int i=0; i<nSites; i++)
     cumHSvstime_detgrade[i]->Draw("PL same");
-
-  cHSvstime->cd();
-  TPaveText *pt1 = new TPaveText(.05,.042,.28,.18);
+  TPaveText *pt1 = new TPaveText(.099,.015,.207,.174,"NDC");
   pt1->AddText("Comparison to prev. week");
   for(int is=0; is<nSites;is++){
     pt1->AddText(Form("%s: +%.0f", sitename[is].c_str(),cumHSvstime_detgrade[is]->GetBinContent(cumHSvstime_detgrade[is]->GetNbinsX())- cumHSvstime_detgrade[is]->GetBinContent(cumHSvstime_detgrade[is]->GetNbinsX()-1)));
   }
+  legsites->Draw();
   pt1->Draw();
+  cHSvstime1->Print("Results/Stave-HS_results.pdf");
 
-  cHSvstime->cd(2);
-  cHSvstime->GetPad(2)->SetMargin(0.099,0.1,0.1,0.18);
+  TCanvas *cHSvstime2 = new TCanvas("cHSvstime2","cHSvstime2");
+  cHSvstime2->SetMargin(0.099,0.1,0.1,0.18);
   TH1F *frame2 = (TH1F*)frame->Clone("frame2");
   frame2->Draw();
-  frame2->GetYaxis()->SetRangeUser(0., cumHSvstime_detgrade[1]->GetMaximum()+cumHSvstime_detgrade[2]->GetMaximum()+cumHSvstime_detgrade[3]->GetMaximum()+cumHSvstime_detgrade[4]->GetMaximum()+8);
+  frame2->GetYaxis()->SetRangeUser(0., cumHSvstime[1]->GetMaximum()+cumHSvstime[2]->GetMaximum()+cumHSvstime[3]->GetMaximum()+cumHSvstime[4]->GetMaximum()+8);
+  cumHSvstime[0]->Draw("PL same");
   cumHSvstime_detgrade[0]->Draw("PL same");
+  cumOLHSvstime->Draw("PL same");
   cumOLHSvstime_detgrade->Draw("PL same");
   legOLML->Draw();
 
-  cHSvstime->Print("Results/Stave-HS_results.pdf");
+  cHSvstime2->Print("Results/Stave-HS_results.pdf");
 
   //Draw yield
-  TCanvas *cYieldvstime = new TCanvas("cYieldvstime", "cYieldvstime");
-  cYieldvstime->Divide(2,1);
+  TLegend *legOLML2 = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
+  SetLegendStyle(legOLML2);
+  legOLML2->SetNColumns(2);
+  legOLML2->SetTextSize(0.042);
+  legOLML2->AddEntry(cumHSvstime_detgrade[0], "ML", "l");
+  legOLML2->AddEntry(cumOLHSvstime_detgrade, "OL","l");
+
+  TCanvas *cYieldvstime1 = new TCanvas("cYieldvstime1", "cYieldvstime1");
   TLine *line90 = new TLine(yieldOL->GetBinLowEdge(1), 90, upperedge, 90);
   line90->SetLineStyle(2);
   line90->SetLineColor(kGray+2);
-  cYieldvstime->cd(1);
-  cYieldvstime->GetPad(1)->SetMargin(0.099,0.1,0.1,0.18);
-  TH1F *frameyield = cYieldvstime->GetPad(1)->DrawFrame(0., 0., upperedge, 105, "HS Yield vs time; Week; Yield");
+  cYieldvstime1->SetMargin(0.099,0.1,0.1,0.18);
+  TH1F *frameyield = cYieldvstime1->DrawFrame(0., 0., upperedge, 105, "HS Yield vs time; Week; Yield");
   frameyield->SetBins(nbins, 0.5, upperedge);
   frameyield->GetXaxis()->SetTickLength(0.015);
   frameyield->GetXaxis()->SetTitleSize(0.05);
@@ -327,16 +336,17 @@ bool hsanalysis(int year, int thisweek){
   for(int i=0; i<nSites; i++)
     yieldsites[i]->Draw("L HIST same");
   legsites->Draw();
+  cYieldvstime1->Print("Results/Stave-HS_results.pdf");
 
-  cYieldvstime->cd(2);
-  cYieldvstime->GetPad(2)->SetMargin(0.099,0.1,0.1,0.18);
+  TCanvas* cYieldvstime2 = new TCanvas("cYieldvstime2","cYieldvstime2");
+  cYieldvstime2->SetMargin(0.099,0.1,0.1,0.18);
   frameyield->Draw();
   line90->Draw("same");
   yieldsites[0]->Draw("L HIST same");
   yieldOL->Draw("L HIST same");
-  legOLML->Draw();
+  legOLML2->Draw();
 
-  cYieldvstime->Print("Results/Stave-HS_results.pdf");
+  cYieldvstime2->Print("Results/Stave-HS_results.pdf");
 
   return 1;
 }

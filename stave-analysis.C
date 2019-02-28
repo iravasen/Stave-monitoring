@@ -201,10 +201,13 @@ bool staveanalysis(int year, int thisweek){
   //Style for stave vs time plots and yield vs time plots
   for(int isite=0; isite<nSites; isite++){
     SetStyleSite(cumStavevstime[isite], color_site[isite]);
+    cumStavevstime[isite]->SetLineStyle(9);
     SetStyleSite(cumStavevstime_detgrade[isite], color_site[isite]);
     SetStyleSite(yieldsites[isite], color_site[isite]);
   }
   SetStyleSite(cumOLStavevstime_detgrade, 2);
+  SetStyleSite(cumOLStavevstime,2);
+  cumOLStavevstime->SetLineStyle(9);
   SetStyleSite(yieldOL, 2);
 
   //////////////////////////////////////////////////
@@ -275,26 +278,23 @@ bool staveanalysis(int year, int thisweek){
   cStavetot->Print("Results/Stave-HS_results.pdf");
 
   //det. grade stave vs time & total (OL and ML) det. grade Stave vs time
-  TCanvas *cStavevstime = new TCanvas("cStavevstime", "cStavevstime");
-  cStavevstime->Divide(2,1);
+  TCanvas *cStavevstime1 = new TCanvas("cStavevstime1", "cStavevstime1");
   TLegend *legsites = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
   SetLegendStyle(legsites);
   legsites->SetNColumns(2);
   legsites->SetTextSize(0.042);
   for(int isite=0; isite<nSites; isite++)
-    legsites->AddEntry(cumStavevstime[isite], sitename[isite].c_str(), "l");
+    legsites->AddEntry(cumStavevstime_detgrade[isite], sitename[isite].c_str(), "l");
   TLegend *legOLML = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
   SetLegendStyle(legOLML);
   legOLML->SetNColumns(2);
   legOLML->SetTextSize(0.042);
-  legOLML->AddEntry(cumStavevstime[0], "ML (all)", "l");
-  legOLML->AddEntry(cumStavevstime_detgrade[0],"ML (DG)","l");
-  legOLML->AddEntry(cumOLStavevstime,"OL (all)","l");
-  legOLML->AddEntry(cumOLStavevstime_detgrade, "OL", "l");
-
-  cStavevstime->cd(1);
-  cStavevstime->GetPad(1)->SetMargin(0.099,0.1,0.2589,0.18);
-  TH1F *frame = cStavevstime->GetPad(1)->DrawFrame(0., 0., upperedge, cumStavevstime[0]->GetMaximum()+5, "Det. grade Stave vs time; Week; #Stave");
+  legOLML->AddEntry(cumStavevstime[0], "ML(all)", "l");
+  legOLML->AddEntry(cumStavevstime_detgrade[0],"ML(DG)","l");
+  legOLML->AddEntry(cumOLStavevstime,"OL(all)","l");
+  legOLML->AddEntry(cumOLStavevstime_detgrade, "OL(DG)", "l");
+  cStavevstime1->SetMargin(0.099,0.1,0.2589,0.18);
+  TH1F *frame = cStavevstime1->DrawFrame(0., 0., upperedge, cumStavevstime[0]->GetMaximum()+5, "Det. grade Stave vs time; Week; #Stave");
   frame->SetBins(nbins, 0.5, upperedge);
   frame->GetXaxis()->SetTickLength(0.015);
   frame->GetXaxis()->SetRangeUser(27, upperedge); //for better visibility
@@ -305,47 +305,44 @@ bool staveanalysis(int year, int thisweek){
   for(int i=0; i<nSites; i++)
     cumStavevstime_detgrade[i]->Draw("PL same");
   legsites->Draw();
-  cStavevstime->cd();
-  TPaveText *pt1 = new TPaveText(.05,.042,.28,.18);
+  cStavevstime1->cd();
+  TPaveText *pt1 = new TPaveText(.099,.015,.207,.174,"NDC");
   pt1->AddText("Comparison to prev. week");
   for(int is=0; is<nSites;is++){
     pt1->AddText(Form("%s: +%.0f", sitename[is].c_str(),cumStavevstime_detgrade[is]->GetBinContent(cumStavevstime_detgrade[is]->GetNbinsX())- cumStavevstime_detgrade[is]->GetBinContent(cumStavevstime_detgrade[is]->GetNbinsX()-1)));
   }
   pt1->Draw();
+  cStavevstime1->Print("Results/Stave-HS_results.pdf");
 
-  cStavevstime->cd(2);
-  cStavevstime->GetPad(2)->SetMargin(0.099,0.1,0.1,0.18);
+  TCanvas *cStavevstime2 = new TCanvas("cStavevstime2","cStavevstime2");
+  cStavevstime2->SetMargin(0.099,0.1,0.1,0.18);
   TH1F *frame2 = (TH1F*)frame->Clone("frame2");
   frame2->Draw();
   frame2->GetXaxis()->SetRangeUser(27, upperedge); //for better visibility
   frame2->GetYaxis()->SetRangeUser(0., cumStavevstime[1]->GetMaximum()+cumStavevstime[2]->GetMaximum()+cumStavevstime[3]->GetMaximum()+cumStavevstime[4]->GetMaximum()+8);
-
-  TCanvas *pippo = new TCanvas("pippo", "pippo");
   frame2->Draw();
-  cumOLStavevstime->SetLineColor(kRed);
-  cumOLStavevstime->SetLineStyle(9);
-  cumOLStavevstime->SetLineWidth(2);
   cumOLStavevstime->Draw("PL same");
-  cumStavevstime[0]->SetLineColor(kBlack);
-  cumStavevstime[0]->SetLineStyle(9);
-  cumStavevstime[0]->SetLineWidth(2);
   cumStavevstime[0]->Draw("PL same");
   cumStavevstime_detgrade[0]->Draw("PL same");
   cumOLStavevstime_detgrade->Draw("PL same");
   legOLML->Draw();
-  pippo->Print("Results/Stave-HS_results.pdf");
 
-  cStavevstime->Print("Results/Stave-HS_results.pdf");
+  cStavevstime2->Print("Results/Stave-HS_results.pdf");
 
   //Draw yield
-  TCanvas *cStaveYieldvstime = new TCanvas("cStaveYieldvstime", "cStaveYieldvstime");
-  cStaveYieldvstime->Divide(2,1);
+  TLegend *legOLML2 = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
+  SetLegendStyle(legOLML2);
+  legOLML2->SetNColumns(2);
+  legOLML2->SetTextSize(0.042);
+  legOLML2->AddEntry(cumStavevstime_detgrade[0],"ML","l");
+  legOLML2->AddEntry(cumOLStavevstime_detgrade, "OL", "l");
+
+  TCanvas *cStaveYieldvstime1 = new TCanvas("cStaveYieldvstime1", "cStaveYieldvstime1");
   TLine *line90 = new TLine(27, 90, upperedge, 90);
   line90->SetLineStyle(2);
   line90->SetLineColor(kGray+2);
-  cStaveYieldvstime->cd(1);
-  cStaveYieldvstime->GetPad(1)->SetMargin(0.099,0.1,0.1,0.18);
-  TH1F *frameyield = cStaveYieldvstime->GetPad(1)->DrawFrame(0., 0., upperedge, 105, "Stave yield vs time; Week; Yield");
+  cStaveYieldvstime1->SetMargin(0.099,0.1,0.1,0.18);
+  TH1F *frameyield = cStaveYieldvstime1->DrawFrame(0., 0., upperedge, 105, "Stave yield vs time; Week; Yield");
   frameyield->SetBins(nbins, 0.5, upperedge);
   frameyield->GetXaxis()->SetTickLength(0.015);
   frameyield->GetXaxis()->SetRangeUser(27, upperedge); //for better visibility
@@ -357,26 +354,17 @@ bool staveanalysis(int year, int thisweek){
   for(int i=0; i<nSites; i++)
     yieldsites[i]->Draw("L HIST same");
   legsites->Draw();
+  cStaveYieldvstime1->Print("Results/Stave-HS_results.pdf");
 
-  cStaveYieldvstime->cd(2);
-  cStaveYieldvstime->GetPad(2)->SetMargin(0.099,0.1,0.1,0.18);
+  TCanvas* cStaveYieldvstime2 = new TCanvas("cStaveYieldvstime2","cStaveYieldvstime2");
+  cStaveYieldvstime2->SetMargin(0.099,0.1,0.1,0.18);
   frameyield->Draw();
   line90->Draw("same");
   yieldsites[0]->Draw("L HIST same");
   yieldOL->Draw("L HIST same");
-  legOLML->Draw();
+  legOLML2->Draw();
 
-  TCanvas *pippo2 = new TCanvas("pippo2","pippo2");
-  pippo2->cd();
-  frameyield->Draw();
-  cumStavevstime[0]->SetLineStyle(1);
-  line90->Draw("same");
-  for(int i=0; i<nSites; i++)
-    yieldsites[i]->Draw("L HIST same");
-  legsites->Draw();
-  pippo2->Print("Results/Stave-HS_results.pdf");
-
-  cStaveYieldvstime->Print("Results/Stave-HS_results.pdf");
+  cStaveYieldvstime2->Print("Results/Stave-HS_results.pdf");
 
   //Draw a table with the production rate
   TCanvas *cprodrate = new TCanvas("cprodrate", "cprodrate");
