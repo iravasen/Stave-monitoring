@@ -228,7 +228,7 @@ bool staverecanalysis(int year, int thisweek){
   ptStave->AddText("Staves qualified in the previous week");
   ptStave->AddText(" ");
   for(int i=0; i<(int)prevweekStave.size(); i++){
-    ptStave->AddText(Form("%s: (U,L)=(%d, %d)", prevweekStave[i].c_str(), deadchpwU[i], deadchpwL[i]));
+    ptStave->AddText(Form("%s: (U,L)=(%d, %d) bad chips", prevweekStave[i].c_str(), deadchpwU[i], deadchpwL[i]));
   }
   ptStave->AddText(" ");
   ptStave->AddText(" ");
