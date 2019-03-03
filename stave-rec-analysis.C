@@ -379,7 +379,6 @@ bool staverecanalysis(int year, int thisweek){
 
   pt->Draw();
   cprodrate->Print("Results/Stave-HS_results.pdf");
-  cprodrate->Print("Results/Stave-HS_results.pdf]");
 
   return 1;
 }

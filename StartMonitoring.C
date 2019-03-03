@@ -25,6 +25,8 @@
 #include "stave-analysis.C"
 #include "stave-rec-monitoring.C"
 #include "stave-rec-analysis.C"
+#include "check-hs-with-issue.C"
+#include "check-stave-not-dg.C"
 
 void StartMonitoring(int year, int thisweek, string todaydate = "DD/MM/YYYY"){
 
@@ -55,5 +57,9 @@ void StartMonitoring(int year, int thisweek, string todaydate = "DD/MM/YYYY"){
   staverecmonitoring();
   cout<<"Monitoring Stave results (RT)..."<<endl;
   staverecanalysis(year, thisweek);
+  cout<<"Preparing list of reworkable / without-stave HS"<<endl;
+  CheckHsWithIssue();
+  cout<<"Preparing list of non-DG Staves at Stave site"<<endl;
+  CheckStaveNotDg();
 
 }
