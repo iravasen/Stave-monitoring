@@ -13,8 +13,8 @@ bool CheckHsWithIssue(){
 
   //Read file extracting the number of working chips HS by HS
   ifstream infl("hsresults.dat");
-  string hsid, qualdate, siteid, stavefilepath;
-  int chipsok, week, sitenum, categnum;
+  string hsid, qualdate, siteid, stavefilepath, datestave,hsuid, hslid, staveid;
+  int chipsokhsu, chipsokhsl, chipsok, week, sitenum, categnum;
   vector <int> goodch;
   vector <string> hsnostave;
 
@@ -23,10 +23,11 @@ bool CheckHsWithIssue(){
     sitenum = GetSiteNumber(siteid);
     categnum = GetHsCategoryId(chipsok, hsid);
     //read stave file list to see if the HS is tested already in the stave setup
-    ifstream inflstavefiles("stavefiles.dat");
+    ifstream inflstavefiles("staveresults.dat");
     int c=0;
-    while(inflstavefiles>>stavefilepath){
-      if(stavefilepath.find(hsid) != string::npos) {c++; break;}
+    while(inflstavefiles>>staveid>>hsuid>>hslid>>chipsokhsu>>chipsokhsl>>datestave>>week){
+      if(hsuid==hsid) {c++; break;}
+      if(hslid==hsid) {c++; break;}
     }
     if(!c){
         hsnostave.push_back(hsid);

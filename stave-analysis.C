@@ -31,6 +31,7 @@ bool staveanalysis(int year, int thisweek){
   int chipsokHSL, chipsokHSU, week, sitenum, categnum, staveyear;
   vector <string> thisweekStave, prevweekStave;
   vector <int> deadchtwU, deadchtwL, deadchpwU, deadchpwL;
+  string hsuid, hslid;
 
   double nstaveincat[nSites][nCatStave];
   double nstaveincatOL[nCatStave] = {0.};
@@ -38,7 +39,7 @@ bool staveanalysis(int year, int thisweek){
     for(int j=0; j<nCatStave; j++)
       nstaveincat[i][j]=0.;
 
-  while(infl>>staveid>>chipsokHSU>>chipsokHSL>>qualdate>>week){
+  while(infl>>staveid>>hsuid>>hslid>>chipsokHSU>>chipsokHSL>>qualdate>>week){
     siteid = staveid.substr(0,1);
     sitenum = GetSiteNumber(siteid);
     categnum = GetStaveCategoryId(chipsokHSU, chipsokHSL, staveid);

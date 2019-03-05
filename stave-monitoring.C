@@ -23,20 +23,19 @@ bool stavemonitoring(){
   //Add old HS, HS without attachments by hand (from excel)
   const int nManual = 13;
   string shsmanual[nManual] = {
-    "B-ML-Stave-011 56 56 12/11/2018 46",
-    "B-ML-Stave-013 56 56 20/11/2018 47",
-    "B-ML-Stave-017 56 56 12/12/2018 50",
-    "B-ML-Stave-024 56 56 31/1/2019 5",
-    "A-OL-Stave-001 96 84 7/9/2018 36",
-    "A-OL-Stave-002 91 49 7/9/2018 36",
-    "A-OL-Stave-003 0 0 7/9/2018 36",
-    "A-OL-Stave-007 98 98 3/12/2018 49",
-    "A-OL-Stave-008 98 97 26/11/2018 48",
-    "A-OL-Stave-009 98 97 14/1/2019 3",
-    "D-OL-Stave-001 98 76 9/8/2018 32",
-    //"D-OL-Stave-003 97 97 3/9/2018 36",
-    "F-OL-Stave-001 55 84 14/9/2018 37",
-    "F-OL-Stave-014 98 98 8/2/2019 6"
+    "B-ML-Stave-011 B-ML-HS-U-011 B-ML-HS-L-011 56 56 12/11/2018 46",
+    "B-ML-Stave-013 B-ML-HS-U-013 B-ML-HS-L-013 56 56 20/11/2018 47",
+    "B-ML-Stave-017 B-ML-HS-U-017 B-ML-HS-L-017 56 56 12/12/2018 50",
+    "B-ML-Stave-024 B-ML-HS-U-124 B-ML-HS-L-024 56 56 31/1/2019 5",
+    "A-OL-Stave-001 A-OL-HS-U-001 A-OL-HS-L-001 96 84 7/9/2018 36",
+    "A-OL-Stave-002 A-OL-HS-U-002 A-OL-HS-L-002 91 49 7/9/2018 36",
+    "A-OL-Stave-003 A-OL-HS-U-003 A-OL-HS-L-003 0 0 7/9/2018 36",
+    "A-OL-Stave-007 A-OL-HS-U-007 A-OL-HS-L-008 98 98 3/12/2018 49",
+    "A-OL-Stave-008 A-OL-HS-U-008 A-OL-HS-L-009 98 97 26/11/2018 48",
+    "A-OL-Stave-009 A-OL-HS-U-010 A-OL-HS-L-010 98 97 14/1/2019 3",
+    "D-OL-Stave-001 D-OL-HS-U-001 D-OL-HS-L-001 98 76 9/8/2018 32",
+    "F-OL-Stave-001 F-OL-HS-U-001 F-OL-HS-L-001 55 84 14/9/2018 37",
+    "F-OL-Stave-014 F-OL-HS-U-014 F-OL-HS-L-014 98 98 8/2/2019 6"
     };
   for(int i=0; i<nManual; i++)
     outfl<<shsmanual[i]<<endl;
@@ -47,6 +46,8 @@ bool stavemonitoring(){
   int nchipsokHSL = 0, nchipsokHSU = 0, nchipsmaskedHSU = 0, nchipsmaskedHSL = 0;
   int count = 0, countU = 0, countL = 0;
   int dayMax = -1, monthMax = -1, yearMax=-1;
+  string hslid, hsuid;
+
   while(infl>>fpath){
     staveid = ReadStaveID(fpath);
     hsid = ReadHSID(fpath);
@@ -89,7 +90,7 @@ bool stavemonitoring(){
 
 
       if(isWritableML && isWritableOL) //the two HSs must exist in the DB (both!)
-        outfl<<staveidold<<" "<<nchipsokHSU+nchipsmaskedHSU<<" "<<nchipsokHSL+nchipsmaskedHSL<<" "<<dayMax<<"/"<<monthMax<<"/"<<2000+yearMax<<" "<<week<<endl; //write to file: <hsid> <#work chip> <qual date> <#week>
+        outfl<<staveidold<<" "<<hsuid<<" "<<hslid<<" "<<nchipsokHSU+nchipsmaskedHSU<<" "<<nchipsokHSL+nchipsmaskedHSL<<" "<<dayMax<<"/"<<monthMax<<"/"<<2000+yearMax<<" "<<week<<endl; //write to file: <hsid> <#work chip> <qual date> <#week>
       count=0;
       countU = 0;
       countL = 0;
@@ -116,11 +117,13 @@ bool stavemonitoring(){
     int nchipsokHIC = ReadThresholdFile(fpath);
 
     if(hsid.find("-U-")!=string::npos){//hs upper
+      hsuid=hsid;
       nchipsokHSU+=nchipsokHIC;
       countU++;
       if(countU==20) nchipsmaskedHSU = GetMaskedFromConfig(fpath.substr(0, fpath.find("Threshold")-1),"Config_HS.cfg");//NOTE: no config file read out
     }
     else{//hs lower
+      hslid=hsid;
       nchipsokHSL+=nchipsokHIC;
       countL++;
       if(countL==20) nchipsmaskedHSL = GetMaskedFromConfig(fpath.substr(0, fpath.find("Threshold")-1),"Config_HS.cfg");//NOTE: no config file read out

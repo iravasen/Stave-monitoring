@@ -13,12 +13,12 @@ bool CheckStaveNotDg(){
 
   //Read file with the list of staves
   ifstream infl("staveresults.dat");
-  string staveid, qualdate, siteid;
+  string staveid, qualdate, siteid, hsuid, hslid;
   int chipsokHSL, chipsokHSU, week, sitenum, categnum;
   vector <int> goodchhsl, goodchhsu;
   vector <string> stavenotdg;
 
-  while(infl>>staveid>>chipsokHSU>>chipsokHSL>>qualdate>>week){
+  while(infl>>staveid>>hsuid>>hslid>>chipsokHSU>>chipsokHSL>>qualdate>>week){
     siteid = staveid.substr(0,1);
     categnum = GetStaveCategoryId(chipsokHSU, chipsokHSL, staveid);
     //read stave file list to see if the HS is tested already in the stave setup
