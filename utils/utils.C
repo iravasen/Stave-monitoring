@@ -257,6 +257,8 @@ int GetRepetitions(string filename, string hicid){
   if(hicid.find("AR000679")!= string::npos) return 1; //error in the DB is present for this HIC
   if(hicid.find("AR001154")!= string::npos) return 1; //error in the DB is present for this HIC
   if(hicid.find("AR001045")!= string::npos) return 1; //this HIS is present both in F-OL-Stave-012 and F-OL-Stave-015
+  if(hicid.find("AR000290")!= string::npos) return 1; //both in B Stave 024 and 029
+  if(hicid.find("BR000667")!= string::npos) return 1; //both in B Stave 024 and 029
 
   ifstream file(filename.c_str());
   string line;

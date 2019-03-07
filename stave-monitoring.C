@@ -57,6 +57,7 @@ bool stavemonitoring(){
     string nextpath;
     if(fpath.find("---------")==string::npos){//if not at the end of the file
       int nrep = GetRepetitions("stavefiles.dat", hicid);
+      if(staveid=="A-OL-Stave-004") cout<<"nrep: "<<nrep<<"   "<<hicid<<endl;
       for(int irep=0; irep<nrep-1; irep++)
         infl>>nextpath;
       if(nrep>1)
