@@ -29,6 +29,12 @@ bool CheckHsWithIssue(){
       if(hsuid==hsid) {c++; break;}
       if(hslid==hsid) {c++; break;}
     }
+    inflstavefiles.close();
+    ifstream stavefl2("stavefiles.dat");//try to search in the file list for partly tested staves (= not in the stave results file) 
+    while(stavefl2>>stavefilepath){
+      if(stavefilepath.find(hsid)!=string::npos) {c++; break;}
+    }
+    stavefl2.close();
     if(!c){
         hsnostave.push_back(hsid);
         goodch.push_back(chipsok);
