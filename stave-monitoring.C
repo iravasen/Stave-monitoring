@@ -18,20 +18,20 @@ bool stavemonitoring(){
   ofstream outfl("staveresults.dat");
 
   //Black list: HSs that are in the DB but have some problems: missing HIC QT, missing attachments (added manually below)
-  string blacklist = "B-ML-Stave-024, B-ML-Stave-011, B-ML-Stave-013, B-ML-Stave-017, A-OL-Stave-001, A-OL-Stave-002, A-OL-Stave-003, A-OL-Stave-007, A-OL-Stave-008, A-OL-Stave-009, D-OL-Stave-001, F-OL-Stave-001, F-OL-Stave-014";
+  string blacklist = "B-ML-Stave-011, B-ML-Stave-013, B-ML-Stave-017, A-OL-Stave-001, A-OL-Stave-002, A-OL-Stave-003, A-OL-Stave-007, A-OL-Stave-009, D-OL-Stave-001, F-OL-Stave-001, F-OL-Stave-014";
 
   //Add old HS, HS without attachments by hand (from excel)
-  const int nManual = 13;
+  const int nManual = 11;
   string shsmanual[nManual] = {
     "B-ML-Stave-011 B-ML-HS-U-011 B-ML-HS-L-011 56 56 12/11/2018 46",
     "B-ML-Stave-013 B-ML-HS-U-013 B-ML-HS-L-013 56 56 20/11/2018 47",
     "B-ML-Stave-017 B-ML-HS-U-017 B-ML-HS-L-017 56 56 12/12/2018 50",
-    "B-ML-Stave-024 B-ML-HS-U-124 B-ML-HS-L-024 56 56 31/1/2019 5",
+    //"B-ML-Stave-024 B-ML-HS-U-124 B-ML-HS-L-024 56 56 31/1/2019 5",
     "A-OL-Stave-001 A-OL-HS-U-001 A-OL-HS-L-001 96 84 7/9/2018 36",
     "A-OL-Stave-002 A-OL-HS-U-002 A-OL-HS-L-002 91 49 7/9/2018 36",
     "A-OL-Stave-003 A-OL-HS-U-003 A-OL-HS-L-003 0 0 7/9/2018 36",
     "A-OL-Stave-007 A-OL-HS-U-007 A-OL-HS-L-008 98 98 3/12/2018 49",
-    "A-OL-Stave-008 A-OL-HS-U-008 A-OL-HS-L-009 98 97 26/11/2018 48",
+   // "A-OL-Stave-008 A-OL-HS-U-008 A-OL-HS-L-009 98 97 26/11/2018 48",
     "A-OL-Stave-009 A-OL-HS-U-010 A-OL-HS-L-010 98 97 14/1/2019 3",
     "D-OL-Stave-001 D-OL-HS-U-001 D-OL-HS-L-001 98 76 9/8/2018 32",
     "F-OL-Stave-001 F-OL-HS-U-001 F-OL-HS-L-001 55 84 14/9/2018 37",
@@ -74,17 +74,21 @@ bool stavemonitoring(){
       bool isWritableOL = kTRUE;
       bool isWritableML = kTRUE;
       if(staveidold.substr(0,1) != "B" && (countL==7 && countU==7)) isWritableOL=kTRUE;
-      if(staveidold.substr(0,1) != "B" && (countL<7 || countU<7)) isWritableOL = kFALSE;
+      if(staveidold.substr(0,1) != "B" && ((countL<7 || countU<7) || (countL>7 || countU>7))) isWritableOL = kFALSE;
       if(staveidold.substr(0,1) == "B" && (countL==4 && countU==4)) isWritableML=kTRUE;
-      if(staveidold.substr(0,1) == "B" && (countL<4 || countU<4)) isWritableML=kFALSE;
+      if(staveidold.substr(0,1) == "B" && ((countL<4 || countU<4) || (countL>4 || countU>4))) isWritableML=kFALSE;
 
       if(!isWritableML){
         if(countL<4) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Lower (not written)", 4-countL));
+        if(countL>4) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Lower (not written)", countL));
         if(countU<4) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Upper (not written)", 4-countU));
+        if(countU>4) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Upper (not written)", countU));
       }
       if(!isWritableOL){
         if(countL<7) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Lower (not written)",7-countL));
+        if(countL>7) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Lower (not written)", countL));
         if(countU<7) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Upper (not written)", 7-countU));
+        if(countU>7) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Upper (not written)", countU));
       }
 
 

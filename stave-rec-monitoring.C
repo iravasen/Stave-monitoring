@@ -60,19 +60,26 @@ bool staverecmonitoring(){
 
       bool isWritableOL = kTRUE;
       bool isWritableML = kTRUE;
+      
       if(staveidold.substr(0,1) != "B" && (countL==7 && countU==7)) isWritableOL=kTRUE;
-      if(staveidold.substr(0,1) != "B" && (countL<7 || countU<7)) isWritableOL = kFALSE;
+      if(staveidold.substr(0,1) != "B" && ((countL<7 || countU<7) || (countL>7 || countU>7))) isWritableOL = kFALSE;
       if(staveidold.substr(0,1) == "B" && (countL==4 && countU==4)) isWritableML=kTRUE;
-      if(staveidold.substr(0,1) == "B" && (countL<4 || countU<4)) isWritableML=kFALSE;
+      if(staveidold.substr(0,1) == "B" && ((countL<4 || countU<4) || (countL>4 || countU>4))) isWritableML=kFALSE;
+
 
       if(!isWritableML){
         if(countL<4) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Lower (not written)", 4-countL));
+        if(countL>4) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Lower (not written)", countL));
         if(countU<4) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Upper (not written)", 4-countU));
+        if(countU>4) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Upper (not written)", countU));
       }
       if(!isWritableOL){
         if(countL<7) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Lower (not written)",7-countL));
+        if(countL>7) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Lower (not written)", countL));
         if(countU<7) errormsg(staveidold.c_str(),Form(": %d missing HIC(s) for HS-Upper (not written)", 7-countU));
-      }
+        if(countU>7) errormsg(staveidold.c_str(),Form(": %d HIC(s) for HS-Upper (not written)", countU));
+      } 
+
 
 
 
