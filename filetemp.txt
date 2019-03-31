@@ -1,0 +1,1 @@
+/eos/project/a/alice-its/HicTests/StaveReceptionML/CERN/OBHIC-AR000698_Retest_3/ThresholdScanResult_181202_123647.dat

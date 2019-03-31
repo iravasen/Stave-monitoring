@@ -7,21 +7,21 @@
 bool stavemonitoring(){
 
   //Create file with all the ThresholdScan files to be analysed
-  gSystem->Exec("find ../Data/*_Stave_Qualification_Test -name \"*ThreshTuned_0V.dat\" -print0 | sort -z | xargs -r0 | tr \" \" \"\n\" > stavefiles.dat");
+  //gSystem->Exec("find ../Data/*_Stave_Qualification_Test -name \"*ThreshTuned_0V.dat\" -print0 | sort -z | xargs -r0 | tr \" \" \"\n\" > stavefiles.dat");
 
   //Add a line to the file (for saving last HS)
-  ofstream stavefile("stavefiles.dat", std::ios_base::app | std::ios_base::out);
+  /*ofstream stavefile("stavefiles.dat", std::ios_base::app | std::ios_base::out);
   stavefile << "------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
-  stavefile.close();
+  stavefile.close();*/
 
   //Output file
   ofstream outfl("staveresults.dat");
 
   //Black list: HSs that are in the DB but have some problems: missing HIC QT, missing attachments (added manually below)
-  string blacklist = "B-ML-Stave-011, B-ML-Stave-013, B-ML-Stave-017, A-OL-Stave-001, A-OL-Stave-002, A-OL-Stave-003, A-OL-Stave-007, A-OL-Stave-009, D-OL-Stave-001, F-OL-Stave-001, F-OL-Stave-014";
+  string blacklist = "T-OL-Stave-006, B-ML-Stave-011, B-ML-Stave-013, B-ML-Stave-017, A-OL-Stave-001, A-OL-Stave-002, A-OL-Stave-003, A-OL-Stave-007, A-OL-Stave-009, D-OL-Stave-001, F-OL-Stave-001, F-OL-Stave-014";
 
   //Add old HS, HS without attachments by hand (from excel)
-  const int nManual = 11;
+  const int nManual = 12;
   string shsmanual[nManual] = {
     "B-ML-Stave-011 B-ML-HS-U-011 B-ML-HS-L-011 56 56 12/11/2018 46",
     "B-ML-Stave-013 B-ML-HS-U-013 B-ML-HS-L-013 56 56 20/11/2018 47",
@@ -35,23 +35,24 @@ bool stavemonitoring(){
     "A-OL-Stave-009 A-OL-HS-U-010 A-OL-HS-L-010 98 97 14/1/2019 3",
     "D-OL-Stave-001 D-OL-HS-U-001 D-OL-HS-L-001 98 76 9/8/2018 32",
     "F-OL-Stave-001 F-OL-HS-U-001 F-OL-HS-L-001 55 84 14/9/2018 37",
-    "F-OL-Stave-014 F-OL-HS-U-014 F-OL-HS-L-014 98 98 8/2/2019 6"
+    "F-OL-Stave-014 F-OL-HS-U-014 F-OL-HS-L-014 98 98 8/2/2019 6",
+    "T-OL-Stave-006 T-OL-HS-U-006 T-OL-HS-L-006 98 98 23/7/2018 30"
     };
   for(int i=0; i<nManual; i++)
     outfl<<shsmanual[i]<<endl;
 
   //Read file extracting the number of working chips HS by HS
   ifstream infl("stavefiles.dat");
-  string fpath, staveid, hsid, hicid, staveidold, qualdate, qualdateold;
+  string fpath, activityname, staveid, hsid, hicid, staveidold, qualdate, qualdateold;
   int nchipsokHSL = 0, nchipsokHSU = 0, nchipsmaskedHSU = 0, nchipsmaskedHSL = 0;
   int count = 0, countU = 0, countL = 0;
   int dayMax = -1, monthMax = -1, yearMax=-1;
   string hslid, hsuid;
 
-  while(infl>>fpath){
-    staveid = ReadStaveID(fpath);
-    hsid = ReadHSID(fpath);
-    hicid = ReadHICID(fpath);
+  while(infl>>activityname>>fpath){
+    staveid = ReadStaveID(activityname);
+    hsid = ReadHSID(activityname);
+    hicid = ReadHICID(activityname);
     if(blacklist.find(staveid) != string::npos) continue; //exclude HS that are added manually for DB issues
     //Take the most recent data in case of multiple information
     string nextpath;

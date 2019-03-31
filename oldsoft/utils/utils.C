@@ -32,24 +32,6 @@ int ReadThresholdFile(string fpath){
   //Open file of the theshold scan and loop on it
   ifstream source;
   source.open(fpath, ios_base::in);
-  //Create correct path in case the one from the DB is wrong
-  if(source.fail() && fpath.find("--------")==string::npos){
-	string filename=fpath.substr(fpath.find("Threshold"), fpath.size());
-	string basedir=fpath.substr(0, fpath.find("OBHIC")+14);
-	gSystem->Exec(Form("find %s* %s | grep %s > filetemp.txt", basedir.c_str(), filename.c_str(), filename.c_str()));
-	ifstream ftemp("filetemp.txt");
-	string correctpath;
-	ftemp>>correctpath;
-	ftemp.close();
-	source.open(correctpath, ios_base::in);
-  }
-  if(source.fail()){
-	ofstream outfilemissing;
-	outfilemissing.open("filemissingeos.txt",ios_base::app);
-	string dir = fpath.substr(0,fpath.find("OBHIC")+14);
-	outfilemissing<<dir<<endl;
-	outfilemissing.close();
-  }
   for(string line2; getline(source, line2);){
 
     if(line2.find("Number of chips") != std::string::npos){
@@ -279,9 +261,9 @@ int GetRepetitions(string filename, string hicid){
   //if(hicid.find("BR000667")!= string::npos) return 1; //both in B Stave 024 and 029
 
   ifstream file(filename.c_str());
-  string line1, line2;
-  while(file>>line1>>line2){
-    if(line1.find(hicid) != string::npos) n++;
+  string line;
+  while(file>>line){
+    if(line.find(hicid) != string::npos) n++;
   }
   return n;
 }
