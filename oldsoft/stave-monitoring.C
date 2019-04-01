@@ -7,7 +7,7 @@
 bool stavemonitoring(){
 
   //Create file with all the ThresholdScan files to be analysed
-  gSystem->Exec("find ../Data/*_Stave_Qualification_Test -name \"*ThreshTuned_0V.dat\" -print0 | sort -z | xargs -r0 | tr \" \" \"\n\" > stavefiles.dat");
+  gSystem->Exec("find ../../Data/*_Stave_Qualification_Test -name \"*ThreshTuned_0V.dat\" -print0 | sort -z | xargs -r0 | tr \" \" \"\n\" > stavefiles.dat");
 
   //Add a line to the file (for saving last HS)
   ofstream stavefile("stavefiles.dat", std::ios_base::app | std::ios_base::out);

@@ -7,7 +7,7 @@
 bool hsmonitoring(){
 
   //Create file with all the ThresholdScan files to be analysed
-  gSystem->Exec("find ../Data/*_HS_Qualification_Test -name \"ThresholdScanResult*\" -print0 | sort -z | xargs -r0 | tr \" \" \"\n\" > hsfiles.dat");
+  gSystem->Exec("find ../../Data/*_HS_Qualification_Test -name \"ThresholdScanResult*\" -print0 | sort -z | xargs -r0 | tr \" \" \"\n\" > hsfiles.dat");
 
   //Add a line to the file (for saving last HS)
   ofstream hsfile("hsfiles.dat", std::ios_base::app | std::ios_base::out);
