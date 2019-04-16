@@ -38,7 +38,7 @@ int IsFileExisting(string path){
 }
 
 //Bubble sort for strings
-void bubbleSort(std::vector<string> &arr1, std::vector<int> &arr2, std::vector<string> &arr3, int n) 
+void bubbleSort(std::vector<string> &arr1, std::vector<string> &arr2, int n) 
 {  
     for (int j=0; j<n-1; j++) 
     { 
@@ -48,20 +48,19 @@ void bubbleSort(std::vector<string> &arr1, std::vector<int> &arr2, std::vector<s
     		{ 
     			std::swap(arr1[i], arr1[j]);
 			std::swap(arr2[i], arr2[j]);
-			std::swap(arr3[i], arr3[j]);
                 } 
         } 
     } 
 }
  
 //Function to write vector into file
-void WriteToFile(std::vector<string> name, std::vector<int> wc, std::vector<string> date, string fname){
+void WriteToFile(std::vector<string> name, std::vector<string> path, string fname){
 	
 	ofstream fileout (fname.c_str());
 	for(int i=0; i<(int)name.size(); i++){
-		fileout<<name[i]<<" "<<date[i].substr(0,8)<<" "<<wc[i]<<endl;
+		fileout<<name[i]<<" "<<path[i]<<endl;
 	}
-	fileout<<"-------------------------------------- ------------------------------------ -1"<<endl;
+	fileout<<"-------------------------------------------------------------------------- ------------------------------------------------------------------------------------"<<endl;
 	fileout.close();
 }
   
@@ -70,12 +69,10 @@ void WriteToFile(std::vector<string> name, std::vector<int> wc, std::vector<stri
 
 void GetFromDatabase(){
 
-        //THicType hicType = HIC_OB;
+        THicType hicType = HIC_OB;
 
 	//vector to contain activity name and file paths 
 	std::vector<string> fpathHS, fpathStave, fpathStaveCern, hsAname, staveAname, staveAnamecern;
-	std::vector<string> dateHS, dateStave, dateCern;
-	std::vector<int> wcHS, wcStave, wcCern;
 	//vector for string editing
 	std::vector<string> testcity = {"TestB","TestT","TestA", "TestD", "TestF"};
 	std::vector<string> testcityund = {"Test_B","Test_T","Test_A", "Test_D", "Test_F"};
@@ -108,23 +105,21 @@ void GetFromDatabase(){
 			activityDB->Read(act.ID, &actLong);
 
 			//EOS path
-			//string eosPathSingle = GetEosPath(actLong, hicType, false);
-       			//string eosPathDouble = GetEosPath(actLong, hicType, true);//for old HICs where HIC name appear twice
+			string eosPathSingle = GetEosPath(actLong, hicType, false);
+       			string eosPathDouble = GetEosPath(actLong, hicType, true);//for old HICs where HIC name appear twice
 
-			//string dataName, resultName;	
-			//GetThresholdFileName(actLong, 0, false, 0, dataName, resultName);//take tuned thr scan at 0V BB
+			string dataName, resultName;	
+			GetThresholdFileName(actLong, 0, false, 0, dataName, resultName);//take tuned thr scan at 0V BB
 			
 			//Get the paramenter "Number of Working Chips"
 			float nworkch;
-			bool isparamexist;
-			isparamexist = DbFindParamValue(actLong.Parameters, "Number of Working Chips", nworkch);
-			if(!isparamexist) nworkch = -1.;
+			DbFindParamValue(actLong.Parameters, "Number of Working Chips", nworkch);
+
 			//Get start date 
-			string qualdatehuman;
-			qualdatehuman.resize(20);
+			char qualdatehuman[20];
 			time_t qualdatetimeunix = actLong.StartDate;
-			strftime(&qualdatehuman[0], qualdatehuman.size(), "%Y%m%d %H:%M:%S", localtime(&qualdatetimeunix));
-			//cout<<actLong.Name<<"  "<<qualdatehuman<<endl;
+			strftime(qualdatehuman, 20, "%d/%m/%Y %H:%M:%S", localtime(&qualdatetimeunix));
+			cout<<actLong.Name<<"  "<<qualdatehuman<<endl;
 			/*std::tm* t = std::gmtime(&qualdatetime);
 			std::stringstream ss; // or if you're going to print, just input directly into the output stream
 			ss << std::put_time(t, "%d/%m/%Y %I:%M:%S %p");
@@ -132,16 +127,16 @@ void GetFromDatabase(){
 			cout<<actLong.Name<<"  "<<output<<endl;*/
 			
 			
-			//string fpathSingle = eosPathSingle + "/" + resultName;
-			//string fpathDouble = eosPathDouble + "/" + resultName;
+			string fpathSingle = eosPathSingle + "/" + resultName;
+			string fpathDouble = eosPathDouble + "/" + resultName;
 		         
 			//Check which file really exist in eos
-			//int fexistSingle = IsFileExisting(fpathSingle);
-			//string fpathreal; 
+			int fexistSingle = IsFileExisting(fpathSingle);
+			string fpathreal; 
 				
-			//if(fexistSingle==-1) continue;
-			//else if(fexistSingle) fpathreal=fpathSingle;
-			//else fpathreal=fpathDouble;
+			if(fexistSingle==-1) continue;
+			else if(fexistSingle) fpathreal=fpathSingle;
+			else fpathreal=fpathDouble;
 
 			//Remove a strange [1558583984] number from activity name, remove "Retest", replace Test<city> with Test_city-> problem for alphabetic order
 			if(actLong.Name.find("[") != string::npos)
@@ -153,14 +148,13 @@ void GetFromDatabase(){
 					actLong.Name.replace(actLong.Name.find(testcity[i].c_str()), 5, testcityund[i].c_str());
 			
 
-			//Save activity names, test date, #work-chips into vector (alphabetically unordered here!)
-			if(actLong.Type.Name.find("Stave") == string::npos) {wcHS.push_back(nworkch); dateHS.push_back(qualdatehuman); hsAname.push_back(space2underscore(actLong.Name));}
+			//Save file paths and activity names into vector (alphabetically unordered here!)
+			if(actLong.Type.Name.find("Stave") == string::npos) {fpathHS.push_back(fpathreal); hsAname.push_back(space2underscore(actLong.Name));}
                         if(actLong.Type.Name.find("Reception") == string::npos && actLong.Type.Name.find("HS Qualification")==string::npos){ 
-				dateStave.push_back(qualdatehuman);
-				wcStave.push_back(nworkch); 
+				fpathStave.push_back(fpathreal); 
 				staveAname.push_back(space2underscore(actLong.Name));
 			}
-                        if(actLong.Type.Name.find("Reception") != string::npos) {wcCern.push_back(nworkch); dateCern.push_back(qualdatehuman); staveAnamecern.push_back(space2underscore(actLong.Name));}
+                        if(actLong.Type.Name.find("Reception") != string::npos) {fpathStaveCern.push_back(fpathreal); staveAnamecern.push_back(space2underscore(actLong.Name));}
 		}
 
 		delete activityDB;
@@ -168,14 +162,14 @@ void GetFromDatabase(){
 	}
 
 	//Add paths manually
-	/*for(int i=0; i<(int)pathStaveRec.size(); i++){
+	for(int i=0; i<(int)pathStaveRec.size(); i++){
 		fpathStaveCern.push_back(pathStaveRec[i].substr(pathStaveRec[i].find("/eos"),pathStaveRec[i].size()));
 		staveAnamecern.push_back(pathStaveRec[i].substr(0, pathStaveRec[i].find("/eos")-1));
 	}
 	for(int i=0; i<(int)pathStaveQt.size(); i++){
                 fpathStave.push_back(pathStaveQt[i].substr(pathStaveQt[i].find("/eos"),pathStaveQt[i].size()));
                 staveAname.push_back(pathStaveQt[i].substr(0, pathStaveQt[i].find("/eos")-1));
-        }*/
+        }
 
 		
 
@@ -183,14 +177,14 @@ void GetFromDatabase(){
 	
 
 	//Alphabetical ordering of the vector 
-	bubbleSort(hsAname, wcHS, dateHS, (int)hsAname.size());
-	bubbleSort(staveAname, wcStave, dateStave, (int)staveAname.size());
-	bubbleSort(staveAnamecern, wcCern, dateCern, (int)staveAnamecern.size());
+	bubbleSort(hsAname, fpathHS, (int)hsAname.size());
+	bubbleSort(staveAname, fpathStave, (int)staveAname.size());
+	bubbleSort(staveAnamecern, fpathStaveCern, (int)staveAnamecern.size());
 
 	//Write vector into file (alphabetically ordered!!)
-	WriteToFile(hsAname, wcHS, dateHS, "hsfiles.dat");
-	WriteToFile(staveAname, wcStave, dateStave, "stavefiles.dat");
-	WriteToFile(staveAnamecern, wcCern, dateCern, "stavefiles_rec.dat");
+	WriteToFile(hsAname, fpathHS, "hsfiles.dat");
+	WriteToFile(staveAname, fpathStave, "stavefiles.dat");
+	WriteToFile(staveAnamecern, fpathStaveCern, "stavefiles_rec.dat");
 		
 	
 }

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+while read FILE_PATH; do
+  if [[ ! -f "$FILE_PATH" ]] 
+  then
+    IFS='OBHIC-' read -ra ADDR <<< "$FILE_PATH"
+    for i in "${ADDR[@]}"; do
+      echo "$i"
+    done
+  else
+  fi
+
+done < <(cat $1 | awk '{ print $2 }' | grep -v -e "----------")
+

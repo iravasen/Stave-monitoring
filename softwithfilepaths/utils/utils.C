@@ -183,24 +183,24 @@ int GetWeek(int day, int month, int year){
 	return GetWeek(&date);
 }
 
-//Get day from date YYYYMMDD
+//Get day from date YYMMDD
 int GetDay(string date){
   if(date.find("-") != string::npos) return 0;
   string sday = date.substr(date.length()-2);
   return std::stoi(sday);
 }
 
-//Get Month from date YYYYMMDD
+//Get Month from date YYMMDD
 int GetMonth(string date){
   if(date.find("-") != string::npos) return 0;
-  string smon = date.substr(4,2);
+  string smon = date.substr(2,2);
   return std::stoi(smon);
 }
 
-//Gey year from date YYYYMMDD
+//Gey year from date YYMMDD
 int GetYear(string date){
   if(date.find("-") != string::npos) return 0;
-  string syr = date.substr(0,4);
+  string syr = date.substr(0,2);
   return std::stoi(syr);
 }
 
