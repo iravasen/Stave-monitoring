@@ -38,6 +38,7 @@ bool staverecmonitoring(){
     hsid = ReadHSID(activityname);
     hicid = ReadHICID(activityname);
     if(blacklist.find(staveid.back()) != string::npos) {staveid.pop_back(); continue;} //exclude HS that are added manually for DB issues
+    if(staveid[staveid.size()-1]=="A-OL-Stave-013" && hsid=="A-OL-HS-U-013") continue; //to correct bug for QT of this stave
 	
     //Qualification date
     qualdate.push_back(date);
