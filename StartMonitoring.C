@@ -38,7 +38,7 @@ void StartMonitoring(int year, int thisweek, string todaydate = "DD/MM/YYYY"){
   latex->SetTextSize(0.08);
   latex->DrawLatex(0.2,0.8,"Stave production monitoring"); //title
   latex->SetTextSize(0.055);
-  latex->DrawLatex(0.12, 0.7, "#bf{Ivan Ravasenga}, #it{Politecnico di Torino and I.N.F.N.}"); //author
+  latex->DrawLatex(0.12, 0.7, "#bf{Ivan Ravasenga}, #it{Bogolyubov Institute for Theo. Phys.}"); //author
   latex->DrawLatex(0.4,0.4,todaydate.c_str());
   latex->DrawLatex(0.15, 0.2,Form("Monitoring from January 2018 to %s", todaydate.c_str()));
   latex->DrawLatex(0.375,0.1,"Stave meeting");

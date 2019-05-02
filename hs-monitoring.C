@@ -18,7 +18,7 @@ bool hsmonitoring(){
   ofstream outfl("hsresults.dat");
 
   //Black list: HSs that are in the DB but have some problems: missing HIC QT, missing attachments (added manually below)
-  string blacklist = "A-OL-HS-U-009, D-OL-HS-U-005, T-OL-HS-U-006, F-OL-HS-U-002, D-OL-HS-L-003, A-OL-HS-U-003, F-OL-HS-U-001, T-OL-HS-L-018, B-ML-HS-L-020, T-OL-HS-U-021, D-OL-HS-U-001, D-OL-HS-L-001, A-OL-HS-U-001, A-OL-HS-L-001, A-OL-HS-L-002, A-OL-HS-U-002, A-OL-HS-L-004, B-ML-HS-U-001, B-ML-HS-L-001, B-ML-HS-U-007, B-ML-HS-L-020";
+  string blacklist = "D-OL-HS-L-210, A-OL-HS-U-009, D-OL-HS-U-005, T-OL-HS-U-006, F-OL-HS-U-002, D-OL-HS-L-003, A-OL-HS-U-003, F-OL-HS-U-001, T-OL-HS-L-018, B-ML-HS-L-020, T-OL-HS-U-021, D-OL-HS-U-001, D-OL-HS-L-001, A-OL-HS-U-001, A-OL-HS-L-001, A-OL-HS-L-002, A-OL-HS-U-002, A-OL-HS-L-004, B-ML-HS-U-001, B-ML-HS-L-001, B-ML-HS-U-007, B-ML-HS-L-020"; //D-OL-HS-L-210
 
   //Add old HS, HS without attachments by hand (from excel)
   const int nManual = 25;
