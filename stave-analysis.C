@@ -98,6 +98,21 @@ bool staveanalysis(int year, int thisweek){
 
   }
 
+  //Calculate the production rate in 2019 (month by month)
+  const int nMonth = 3;
+  double weekst[nMonth] = 
+  double prodrate_detgrade[nSites][nMonth], prodrate_all[nSites][nMonth];
+  double weekstart = 40;//beginning of October
+  for(int is=0; is<nSites; is++){
+    double upint = year==2019 ? (double)(thisweek-1)+52 : (double)thisweek-1;
+    double nweeks = year==2019 ? (double)52-weekstart+1+(thisweek-1) : (double)(thisweek-1)-weekstart+1;
+    nweeks-=2; //remove week 52 of 2018 and week 1 of January (Christmas holiday)
+    prodrate_all[is] = (stavevstime[is]->Integral(weekstart, upint)-stavevstime[is]->GetBinContent(52)-stavevstime[is]->GetBinContent(53)) / nweeks;
+    prodrate_detgrade[is] = (stavevstime_detgrade[is]->Integral(weekstart, upint)-stavevstime_detgrade[is]->GetBinContent(52)-stavevstime_detgrade[is]->GetBinContent(53)) / nweeks;
+
+  }
+
+
   //Remove categories with 0 counts (bad labels in TPie)
   vector <vector<double>> finalnstaveincat;
   vector <vector <TString>> finallab;
