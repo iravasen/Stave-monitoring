@@ -92,6 +92,10 @@ bool staveanalysis(int year, int thisweek){
   for(int is=0; is<nSites; is++){
     double upint = year==2019 ? (double)(thisweek-1)+52 : (double)thisweek-1;
     double nweeks = year==2019 ? (double)52-weekstart+1+(thisweek-1) : (double)(thisweek-1)-weekstart+1;
+    if(is==4){ //Torino
+	upint = 18.+52.; //production ended 29th April
+        nweeks = 52-weekstart+1+18;
+    }
     nweeks-=2; //remove week 52 of 2018 and week 1 of January (Christmas holiday)
     prodrate_all[is] = (stavevstime[is]->Integral(weekstart, upint)-stavevstime[is]->GetBinContent(52)-stavevstime[is]->GetBinContent(53)) / nweeks;
     prodrate_detgrade[is] = (stavevstime_detgrade[is]->Integral(weekstart, upint)-stavevstime_detgrade[is]->GetBinContent(52)-stavevstime_detgrade[is]->GetBinContent(53)) / nweeks;
@@ -99,17 +103,19 @@ bool staveanalysis(int year, int thisweek){
   }
 
   //Calculate the production rate in 2019 (month by month)
-  const int nMonth = 3;
-  double weekst[nMonth] = 
-  double prodrate_detgrade[nSites][nMonth], prodrate_all[nSites][nMonth];
-  double weekstart = 40;//beginning of October
-  for(int is=0; is<nSites; is++){
-    double upint = year==2019 ? (double)(thisweek-1)+52 : (double)thisweek-1;
-    double nweeks = year==2019 ? (double)52-weekstart+1+(thisweek-1) : (double)(thisweek-1)-weekstart+1;
-    nweeks-=2; //remove week 52 of 2018 and week 1 of January (Christmas holiday)
-    prodrate_all[is] = (stavevstime[is]->Integral(weekstart, upint)-stavevstime[is]->GetBinContent(52)-stavevstime[is]->GetBinContent(53)) / nweeks;
-    prodrate_detgrade[is] = (stavevstime_detgrade[is]->Integral(weekstart, upint)-stavevstime_detgrade[is]->GetBinContent(52)-stavevstime_detgrade[is]->GetBinContent(53)) / nweeks;
+  const int nMonth = 4;//January, February, March, April
+  const string monthname[nMonth] = {"January","February","March","April"};
+  double weekst[nMonth] = {2, 5, 9, 14};
+  double weeken[nMonth] = {5, 9, 13, 18};
+  double prodrate_detgrade_month[nSites][nMonth], prodrate_all_month[nSites][nMonth];
+  for(int im=0; im<nMonth; im++){
+  	for(int is=0; is<nSites; is++){
+    		double lowint = year==2019 ? weekst[im]+52. : weekst[im];
+    		double upint = year==2019 ? weeken[im]+52. : weeken[im];
+    		prodrate_all_month[is][im] = (stavevstime[is]->Integral(lowint, upint)) / (weeken[im]-weekst[im]+1);
+    		prodrate_detgrade_month[is][im] = (stavevstime_detgrade[is]->Integral(lowint, upint)) / (weeken[im]-weekst[im]+1);
 
+  	}
   }
 
 
@@ -387,7 +393,7 @@ bool staveanalysis(int year, int thisweek){
   TPaveText *pt = new TPaveText(.05,.1,.95,.8);
   pt->AddText("Production rate (October 2018 - prev. week)**");
   for(int is=0; is<nSites; is++){
-    pt->AddText(Form("%s: %.2f(all) -- %.2f(DG)", sitename[is].c_str(), prodrate_all[is], prodrate_detgrade[is]));
+    pt->AddText(Form("#rightarrow %s: %.2f(all) -- %.2f(DG) %s", sitename[is].c_str(), prodrate_all[is], prodrate_detgrade[is], is==4 ? "#rightarrow Prod. ended":""));
   }
   pt->AddText("");
   pt->AddText(Form("OL: %.2f(all) -- %.2f(DG)", prodrate_all[1]+prodrate_all[2]+prodrate_all[3]+prodrate_all[4], prodrate_detgrade[1]+prodrate_detgrade[2]+prodrate_detgrade[3]+prodrate_detgrade[4]));
@@ -397,6 +403,23 @@ bool staveanalysis(int year, int thisweek){
 
   pt->Draw();
   cprodrate->Print("Results/Stave-HS_results.pdf");
+
+  //Draw a table with the production rate month by month
+  TCanvas *cprodrate_m = new TCanvas("cprodrate_m", "cprodrate_m");
+  pt->Clear();
+  pt->AddText("Production rate 2019 (month by month)**");
+  for(int im=0; im<nMonth; im++){
+    pt->AddText(monthname[im].c_str());
+  	for(int is=0; is<nSites; is++){
+    		pt->AddText(Form("#rightarrow %s: %.2f(all) -- %.2f(DG)", sitename[is].c_str(), prodrate_all_month[is][im], prodrate_detgrade_month[is][im]));
+  	}
+    pt->AddText(Form("OL: %.2f(all) -- %.2f(DG)", prodrate_all_month[1][im]+prodrate_all_month[2][im]+prodrate_all_month[3][im]+prodrate_all_month[4][im], prodrate_detgrade_month[1][im]+prodrate_detgrade_month[2][im]+prodrate_detgrade_month[3][im]+prodrate_detgrade_month[4][im]));
+    pt->AddText(Form("ML: %.2f(all) -- %.2f(DG)", prodrate_all_month[0][im], prodrate_detgrade_month[0][im]));
+    pt->AddText("");
+  }
+  pt->Draw();
+  cprodrate_m->Print("Results/Stave-HS_results.pdf");
+
 
   return 1;
 }
