@@ -10,10 +10,12 @@ bool staverecmonitoring(){
   ofstream outfl("staveresults_rec.dat");
   
   //Black list: HSs that are in the DB but have some problems: missing HIC QT, missing attachments (added manually below)
-  string blacklist = "A-OL-Stave-008, F-OL-Stave-008, B-ML-Stave-003, B-ML-Stave-010";
+  string blacklist = "D-OL-Stave-014, T-OL-Stave-014, A-OL-Stave-008, F-OL-Stave-008, B-ML-Stave-003, B-ML-Stave-010";
   //Add old HS, HS without attachments by hand (from excel)
-  const int nManual = 4;
+  const int nManual = 6;
   string shsmanual[nManual] = {
+	"D-OL-Stave-014 97 98 28/5/2019 22",
+	"T-OL-Stave-014 98 98 16/1/2019 3",
   	"F-OL-Stave-008 98 98 30/11/2018 48",
         "A-OL-Stave-008 98 97 19/2/2019 8",
 	"B-ML-Stave-003 56 56 3/12/2018 49",
