@@ -103,10 +103,10 @@ bool staveanalysis(int year, int thisweek){
   }
 
   //Calculate the production rate in 2019 (month by month)
-  const int nMonth = 4;//January, February, March, April
-  const string monthname[nMonth] = {"January","February","March","April"};
-  double weekst[nMonth] = {2, 5, 9, 14};
-  double weeken[nMonth] = {5, 9, 13, 18};
+  const int nMonth = 5;//January, February, March, April
+  const string monthname[nMonth] = {"January","February","March","April","May"};
+  double weekst[nMonth] = {2, 5, 9, 14,18};
+  double weeken[nMonth] = {5, 9, 13, 18,22};
   double prodrate_detgrade_month[nSites][nMonth], prodrate_all_month[nSites][nMonth];
   for(int im=0; im<nMonth; im++){
   	for(int is=0; is<nSites; is++){
@@ -411,9 +411,18 @@ bool staveanalysis(int year, int thisweek){
   for(int im=0; im<nMonth; im++){
     pt->AddText(monthname[im].c_str());
   	for(int is=0; is<nSites; is++){
-    		pt->AddText(Form("#rightarrow %s: %.2f(all) -- %.2f(DG)", sitename[is].c_str(), prodrate_all_month[is][im], prodrate_detgrade_month[is][im]));
+    		if(im<4) pt->AddText(Form("#rightarrow %s: %.2f(all) -- %.2f(DG)", sitename[is].c_str(), prodrate_all_month[is][im], prodrate_detgrade_month[is][im]));
+		else if(im==4 && is==4) pt->AddText(Form("#rightarrow %s: Production ended", sitename[is].c_str()));
+		else pt->AddText(Form("#rightarrow %s: %.2f(all) -- %.2f(DG)", sitename[is].c_str(), prodrate_all_month[is][im], prodrate_detgrade_month[is][im]));
   	}
-    pt->AddText(Form("OL: %.2f(all) -- %.2f(DG)", prodrate_all_month[1][im]+prodrate_all_month[2][im]+prodrate_all_month[3][im]+prodrate_all_month[4][im], prodrate_detgrade_month[1][im]+prodrate_detgrade_month[2][im]+prodrate_detgrade_month[3][im]+prodrate_detgrade_month[4][im]));
+    double sumtotal = prodrate_all_month[1][im]+prodrate_all_month[2][im]+prodrate_all_month[3][im]+prodrate_all_month[4][im];
+    double sumtotalDG = prodrate_detgrade_month[1][im]+prodrate_detgrade_month[2][im]+prodrate_detgrade_month[3][im]+prodrate_detgrade_month[4][im];
+    if(im>3) {
+	sumtotal = prodrate_all_month[1][im]+prodrate_all_month[2][im]+prodrate_all_month[3][im]; //no Torino
+	sumtotalDG = prodrate_detgrade_month[1][im]+prodrate_detgrade_month[2][im]+prodrate_detgrade_month[3][im];//no Torino
+    } 
+
+    pt->AddText(Form("OL: %.2f(all) -- %.2f(DG)", sumtotal, sumtotalDG));
     pt->AddText(Form("ML: %.2f(all) -- %.2f(DG)", prodrate_all_month[0][im], prodrate_detgrade_month[0][im]));
     pt->AddText("");
   }
