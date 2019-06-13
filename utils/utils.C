@@ -1,6 +1,6 @@
 //Global variables
 const int nSites = 5; //production sites
-const int color_site[nSites] = {923, 419, 801, 632, 857};
+const int color_site[nSites+1] = {923, 419, 801, 632, 857, 616};//last is for reworked
 const string sitename[nSites] = {"Berkeley", "Nikhef", "Daresbury", "Frascati", "Turin"};
 
 //Global variables for stave
@@ -211,7 +211,8 @@ int GetSiteNumber(string siteid){
   else if(siteid=="A") sitenum=1;
   else if(siteid=="D") sitenum=2;
   else if(siteid=="F") sitenum=3;
-  else sitenum=4; //Turin
+  else if(siteid=="T") sitenum=4;
+  else sitenum=5;//Reworked
 
   return sitenum;
 }

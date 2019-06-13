@@ -6,10 +6,10 @@ bool staverecanalysis(int year, int thisweek){
 
   gStyle->SetOptStat(0000);
 
-  TH1F *stavevstime[nSites], *cumStavevstime[nSites];//#Stave vs time (all) and cumulative #Stave vs time
-  TH1F *stavevstime_detgrade[nSites], *cumStavevstime_detgrade[nSites];//#Stave vs time (det grade) and cumulative #Stave vs time (det. grade)
+  TH1F *stavevstime[nSites+1], *cumStavevstime[nSites+1];//#Stave vs time (all) and cumulative #Stave vs time
+  TH1F *stavevstime_detgrade[nSites+1], *cumStavevstime_detgrade[nSites+1];//#Stave vs time (det grade) and cumulative #Stave vs time (det. grade)
   TH1F *cumOLStavevstime_detgrade, *cumOLStavevstime;
-  TH1F *yieldsites[nSites], *yieldOL;
+  TH1F *yieldsites[nSites+1], *yieldOL;
   //number of bins and upper edge of plots vs time
   int nbins;
   double upperedge;
@@ -21,9 +21,9 @@ bool staverecanalysis(int year, int thisweek){
     nbins=thisweek;
     upperedge=52+(double)thisweek+0.5;
   }
-  for(int i=0; i<nSites; i++){
-    stavevstime[i] = new TH1F(Form("%s_Stave_vs_time", sitename[i].c_str()), Form("%s - Stave Rec. vs time", sitename[i].c_str()), nbins, 0.5, upperedge);
-    stavevstime_detgrade[i] = new TH1F(Form("%s_Stave_vs_time_dg", sitename[i].c_str()), Form("%s - Stave Rec. vs time (det. grade)", sitename[i].c_str()), nbins, 0.5, upperedge);
+  for(int i=0; i<nSites+1; i++){
+    stavevstime[i] = new TH1F(Form("%s_Stave_vs_time", i==nSites?"Reworked":sitename[i].c_str()), Form("%s - Stave Rec. vs time", i==nSites?"Reworked":sitename[i].c_str()), nbins, 0.5, upperedge);
+    stavevstime_detgrade[i] = new TH1F(Form("%s_Stave_vs_time_dg", i==nSites?"Reworked":sitename[i].c_str()), Form("%s - Stave Rec. vs time (det. grade)", i==nSites?"Reworked":sitename[i].c_str()), nbins, 0.5, upperedge);
   }
   //Read file extracting the number of working chips HS by HS
   ifstream infl("staveresults_rec.dat");
@@ -32,9 +32,9 @@ bool staverecanalysis(int year, int thisweek){
   vector <string> thisweekStave, prevweekStave;
   vector <int> deadchtwU, deadchtwL, deadchpwU, deadchpwL;
 
-  double nstaveincat[nSites][nCatStave];
+  double nstaveincat[nSites+1][nCatStave];
   double nstaveincatOL[nCatStave] = {0.};
-  for(int i=0; i<nSites; i++)
+  for(int i=0; i<nSites+1; i++)
     for(int j=0; j<nCatStave; j++)
       nstaveincat[i][j]=0.;
 
@@ -67,7 +67,7 @@ bool staverecanalysis(int year, int thisweek){
   vector <double> yieldDetGrade;
   double yieldDetGradeOL;
   double sum = 0., num=0.;
-  for(int i=0; i<nSites; i++){
+  for(int i=0; i<nSites+1; i++){
     sum = 0.;
     num=0.;
     for(int j=0; j<nCatStave; j++){
@@ -86,9 +86,9 @@ bool staverecanalysis(int year, int thisweek){
   yieldDetGradeOL=num/sum*100.;
 
   //Calculate the qualification rate from week 40 (October 2018) to last week
-  double prodrate_detgrade[nSites], prodrate_all[nSites];
+  double prodrate_detgrade[nSites+1], prodrate_all[nSites+1];
   double weekstart = 49;//beginning of October
-  for(int is=0; is<nSites; is++){
+  for(int is=0; is<nSites+1; is++){
     double upint = year==2019 ? (double)(thisweek-1)+52 : (double)thisweek-1;
     double nweeks = year==2019 ? (double)52-weekstart+1+(thisweek-1) : (double)(thisweek-1)-weekstart+1;
     nweeks-=2; //remove week 52 of 2018 and week 1 of January (Christmas holiday)
@@ -103,7 +103,7 @@ bool staverecanalysis(int year, int thisweek){
   vector <int> row2, colOL;
   vector <double> finalnstaveincatOL, row1;
   vector <TString> finallabOL, row3;
-  for(int i=0; i<nSites; i++){
+  for(int i=0; i<nSites+1; i++){
     for(int j=0; j<nCatStave; j++){
       if(nstaveincat[i][j]>0.5){
         row1.push_back(nstaveincat[i][j]);
@@ -131,9 +131,9 @@ bool staverecanalysis(int year, int thisweek){
   //Make cumulative Stave vs time
   double count1=0., count2=0.;
   int limit = year==2019 ? 52+thisweek : thisweek;
-  for(int isite=0; isite<nSites; isite++){
-    cumStavevstime[isite] = (TH1F*)stavevstime[isite]->Clone(Form("cumStavevstime_%s", sitename[isite].c_str()));
-    cumStavevstime_detgrade[isite] = (TH1F*)stavevstime_detgrade[isite]->Clone(Form("cumStavevstime_%s_detgrade", sitename[isite].c_str()));
+  for(int isite=0; isite<nSites+1; isite++){
+    cumStavevstime[isite] = (TH1F*)stavevstime[isite]->Clone(Form("cumStavevstime_%s", isite==nSites?"Reworked":sitename[isite].c_str()));
+    cumStavevstime_detgrade[isite] = (TH1F*)stavevstime_detgrade[isite]->Clone(Form("cumStavevstime_%s_detgrade", isite==nSites?"Reworked":sitename[isite].c_str()));
     for(int ibin=1; ibin<=limit; ibin++){
       for(int ibinprev=1; ibinprev<=ibin; ibinprev++){
         count1+= stavevstime[isite]->GetBinContent(ibinprev);
@@ -152,14 +152,15 @@ bool staverecanalysis(int year, int thisweek){
   cumOLStavevstime_detgrade = (TH1F*)cumStavevstime_detgrade[1]->Clone("cumOLStavevstime_detgrade");
   cumOLStavevstime_detgrade->SetTitle("OL-Stave_detgrade");
 
-  for(int i=2; i<nSites; i++){
+  for(int i=2; i<nSites+1; i++){
     cumOLStavevstime->Add(cumStavevstime[i]);
     cumOLStavevstime_detgrade->Add(cumStavevstime_detgrade[i]);
   }
 
+
   //Calculate yield
-  for(int isite=0; isite<nSites; isite++){
-    yieldsites[isite] = (TH1F*)cumStavevstime[isite]->Clone(Form("yield_%s", sitename[isite].c_str()));
+  for(int isite=0; isite<nSites+1; isite++){
+    yieldsites[isite] = (TH1F*)cumStavevstime[isite]->Clone(Form("yield_%s", isite==nSites?"Reworked":sitename[isite].c_str()));
     yieldsites[isite]->Reset();
     yieldsites[isite]->Divide(cumStavevstime_detgrade[isite], cumStavevstime[isite], 1., 1.);
     yieldsites[isite]->Scale(100.);
@@ -170,13 +171,13 @@ bool staverecanalysis(int year, int thisweek){
   yieldOL->Scale(100.);
 
   //Plot with the total number of HS and HS DG for each site
-  TH1F *hStave = new TH1F("hStavetotal", "All Stave @CERN", nSites, 0.5, 5.5);
-  TH1F *hStave_dg = new TH1F("hStavetotalDG", "Det. Grade Stave @CERN", nSites, 0.5, 5.5);
-  for(int is=0; is<nSites; is++){
+  TH1F *hStave = new TH1F("hStavetotal", "All Stave @CERN", nSites+1, 0.5, 6.5);
+  TH1F *hStave_dg = new TH1F("hStavetotalDG", "Det. Grade Stave @CERN", nSites+1, 0.5, 6.5);
+  for(int is=0; is<nSites+1; is++){
     hStave->SetBinContent(is+1, cumStavevstime[is]->GetBinContent(cumStavevstime[is]->GetNbinsX()));
     hStave_dg->SetBinContent(is+1, cumStavevstime_detgrade[is]->GetBinContent(cumStavevstime_detgrade[is]->GetNbinsX()));
-    hStave->GetXaxis()->SetBinLabel(is+1, sitename[is].c_str());
-    hStave_dg->GetXaxis()->SetBinLabel(is+1, sitename[is].c_str());
+    hStave->GetXaxis()->SetBinLabel(is+1, is==nSites?"Reworked":sitename[is].c_str());
+    hStave_dg->GetXaxis()->SetBinLabel(is+1, is==nSites?"Reworked":sitename[is].c_str());
   }
   hStave->GetXaxis()->SetLabelSize(0.04);
   hStave_dg->GetXaxis()->SetLabelSize(0.04);
@@ -198,7 +199,7 @@ bool staverecanalysis(int year, int thisweek){
   pie[0]->SetTextSize(0.03);
 
   //Style for stave vs time plots and yield vs time plots
-  for(int isite=0; isite<nSites; isite++){
+  for(int isite=0; isite<nSites+1; isite++){
     SetStyleSite(cumStavevstime[isite], color_site[isite]);
     cumStavevstime[isite]->SetLineStyle(9);
     SetStyleSite(cumStavevstime_detgrade[isite], color_site[isite]);
@@ -282,8 +283,8 @@ bool staverecanalysis(int year, int thisweek){
   SetLegendStyle(legsites);
   legsites->SetNColumns(2);
   legsites->SetTextSize(0.042);
-  for(int isite=0; isite<nSites; isite++)
-    legsites->AddEntry(cumStavevstime_detgrade[isite], sitename[isite].c_str(), "l");
+  for(int isite=0; isite<nSites+1; isite++)
+    legsites->AddEntry(cumStavevstime_detgrade[isite], isite==nSites?"Reworked":sitename[isite].c_str(), "l");
   TLegend *legOLML = new TLegend(0.0995, 0.8329, 0.8989, 0.918);
   SetLegendStyle(legOLML);
   legOLML->SetNColumns(2);
@@ -301,7 +302,7 @@ bool staverecanalysis(int year, int thisweek){
   frame->GetYaxis()->SetTitleSize(0.05);
   frame->GetYaxis()->SetTitleOffset(0.9);
   SetLabels(frame, year);
-  for(int i=0; i<nSites; i++)
+  for(int i=0; i<nSites+1; i++)
     cumStavevstime_detgrade[i]->Draw("PL same");
   legsites->Draw();
   cStavevstime1->cd();

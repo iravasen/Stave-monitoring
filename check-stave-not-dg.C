@@ -6,6 +6,8 @@ bool CheckStaveNotDg(){
 
   gStyle->SetOptStat(0000);
 
+  const string stavesnorwk = "F-OL-Stave-001, B-ML-Stave-001, B-ML-Stave-039";
+
   TH1F *hsvstime[nSites], *cumHSvstime[nSites];//#HS vs time (all) and cumulative #HS vs time
   TH1F *hsvstime_detgrade[nSites], *cumHSvstime_detgrade[nSites];//#HS vs time (det grade) and cumulative #HS vs time (det. grade)
   TH1F *cumOLHSvstime_detgrade, *cumOLHSvstime;
@@ -49,12 +51,20 @@ bool CheckStaveNotDg(){
   //List of non-DG Stave
   TCanvas *cStaveNoDg = new TCanvas("cStaveNoDg", "cStaveNoDg");
   TPaveText *ptStave = new TPaveText(.05,.1,.95,.8);
-  ptStave->AddText("Staves not DG");
+  ptStave->AddText("Staves not DG - reworkable");
   ptStave->AddText(" ");
   for(int i=0; i<(int)stavenotdg.size(); i++){
     string siteid = stavenotdg[i].substr(0,1);
-    ptStave->AddText(Form("%s: (U,L) = (%d, %d) bad chips",stavenotdg[i].c_str(), siteid=="B" ? 56-goodchhsu[i]:98-goodchhsu[i], siteid=="B" ? 56-goodchhsl[i]:98-goodchhsl[i]));
+    if(stavesnorwk.find(stavenotdg[i]) == string::npos) ptStave->AddText(Form("%s: (U,L) = (%d, %d) bad chips",stavenotdg[i].c_str(), siteid=="B" ? 56-goodchhsu[i]:98-goodchhsu[i], siteid=="B" ? 56-goodchhsl[i]:98-goodchhsl[i]));
   }
+  ptStave->AddText(" ");
+  ptStave->AddText("Staves not DG - not reworkable");
+  ptStave->AddText(" ");
+  for(int i=0; i<(int)stavenotdg.size(); i++){
+    string siteid = stavenotdg[i].substr(0,1);
+    if(stavesnorwk.find(stavenotdg[i]) != string::npos) ptStave->AddText(Form("%s: (U,L) = (%d, %d) bad chips",stavenotdg[i].c_str(), siteid=="B" ? 56-goodchhsu[i]:98-goodchhsu[i], siteid=="B" ? 56-goodchhsl[i]:98-goodchhsl[i]));
+  }
+
   ptStave->Draw();
   cStaveNoDg->Print("Results/Stave-HS_results.pdf");
   cStaveNoDg->Print("Results/Stave-HS_results.pdf]");
