@@ -110,10 +110,10 @@ bool staveanalysis(int year, int thisweek){
   }
 
   //Calculate the production rate in 2019 (month by month)
-  const int nMonth = 5;//January, February, March, April
-  const string monthname[nMonth] = {"January","February","March","April","May"};
-  double weekst[nMonth] = {2, 5, 9, 14,18};
-  double weeken[nMonth] = {5, 9, 13, 18,22};
+  const int nMonth = 6;//January, February, March, April
+  const string monthname[nMonth] = {"January","February","March","April","May","June"};
+  double weekst[nMonth] = {2, 5, 9, 14,18, 23};
+  double weeken[nMonth] = {5, 9, 13, 18,22, 26};
   double prodrate_detgrade_month[nSites][nMonth], prodrate_all_month[nSites][nMonth];
   for(int im=0; im<nMonth; im++){
   	for(int is=0; is<nSites; is++){
