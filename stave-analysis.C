@@ -50,6 +50,7 @@ bool staveanalysis(int year, int thisweek){
     stavevstime[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//all stave vs time
     bool detgrade = IsStaveDetGrade(categnum, staveid);
     if(staveid=="T-OL-Stave-004") detgrade = kTRUE; //exception for T-OL-Stave-004 since mounted already in the detector
+    if(staveid=="B-ML-Stave-014" || staveid=="B-ML-Stave-004" || staveid=="B-ML-Stave-006") detgrade=kFALSE;
     if(detgrade) stavevstime_detgrade[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//det. grade stave vs time
     if(week==thisweek && staveyear==year) {
       thisweekStave.push_back(staveid);
@@ -102,7 +103,7 @@ bool staveanalysis(int year, int thisweek){
     }
     if(is!=5) nweeks-=2; //remove week 52 of 2018 and week 1 of January (Christmas holiday)
     double christmas_all = stavevstime[is]->GetBinContent(52)+stavevstime[is]->GetBinContent(53);
-    double christmas_dg = stavevstime_detgrade[is]->GetBinContent(52)+stavevstime_detgrade[is]->GetBinContent(53); 
+    double christmas_dg = stavevstime_detgrade[is]->GetBinContent(52)+stavevstime_detgrade[is]->GetBinContent(53);
     if(is==5) {christmas_all=0.; christmas_dg=0.;}
     prodrate_all[is] = (stavevstime[is]->Integral(weekstart, upint)-christmas_all) / nweeks;
     prodrate_detgrade[is] = (stavevstime_detgrade[is]->Integral(weekstart, upint)-christmas_dg) / nweeks;
@@ -428,7 +429,7 @@ bool staveanalysis(int year, int thisweek){
     if(im>3) {
 	sumtotal = prodrate_all_month[1][im]+prodrate_all_month[2][im]+prodrate_all_month[3][im]; //no Torino
 	sumtotalDG = prodrate_detgrade_month[1][im]+prodrate_detgrade_month[2][im]+prodrate_detgrade_month[3][im];//no Torino
-    } 
+    }
 
     pt->AddText(Form("OL: %.2f(all) -- %.2f(DG)", sumtotal, sumtotalDG));
     pt->AddText(Form("ML: %.2f(all) -- %.2f(DG)", prodrate_all_month[0][im], prodrate_detgrade_month[0][im]));
