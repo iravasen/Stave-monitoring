@@ -76,11 +76,38 @@ bool stavemonitoring(){
       	int day = GetDay(qualdate[i]);
       	int month = GetMonth(qualdate[i]);
       	int year = GetYear(qualdate[i]);
-      	if(day>dayMax || month>monthMax || year>yearMax){//Get most recent date
+	if(i==(int)qualdate.size()-2){
+		dayMax=day;
+		monthMax=month;
+		yearMax=year;
+	}
+	else{
+		if(year==yearMax){
+			if(month>monthMax){
+				dayMax=day;
+				monthMax=month;
+				yearMax=year;
+			}
+			else if(month==monthMax){
+				if(day>dayMax){
+					dayMax=day;
+					monthMax=month;
+					yearMax=year;
+				}
+			}
+		}
+		else if(year>yearMax){
+			dayMax=day;
+			monthMax=month;
+			yearMax=year;
+		}
+	}
+
+      	/*if(day>dayMax || month>monthMax || year>yearMax){//Get most recent date
       		dayMax = day;
        		monthMax = month;
        		yearMax=year;
-      	}
+      	}*/
       }
 
       int week = GetWeek(dayMax, monthMax, yearMax);//week (most recent)
