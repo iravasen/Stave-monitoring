@@ -46,7 +46,7 @@ bool staveanalysis(int year, int thisweek){
     staveyear = stoi(qualdate.substr(qualdate.length()-4));
 
     nstaveincat[sitenum][categnum]++;//dead chips site by site
-    if(sitenum!=0) nstaveincatOL[categnum]++;//also reworked are counted here
+    if(sitenum!=0 && (staveid!="T-OL-Stave-003" && staveid!="F-OL-Stave-002" && staveid!="A-OL-Stave-001" && staveid!="D-OL-Stave-008" && staveid!="A-OL-Stave-003")) nstaveincatOL[categnum]++;//also reworked are counted here
     stavevstime[sitenum]->Fill(staveyear==2019 ? (double)week+52. : (double)week);//all stave vs time
     bool detgrade = IsStaveDetGrade(categnum, staveid);
     if(staveid=="T-OL-Stave-004") detgrade = kTRUE; //exception for T-OL-Stave-004 since mounted already in the detector
@@ -184,7 +184,7 @@ bool staveanalysis(int year, int thisweek){
   cumOLStavevstime_detgrade->SetTitle("OL-Stave_detgrade");
 
   for(int i=2; i<nSites+1; i++){//Include reworked
-    cumOLStavevstime->Add(cumStavevstime[i]);
+    if(i<nSites) cumOLStavevstime->Add(cumStavevstime[i]);
     cumOLStavevstime_detgrade->Add(cumStavevstime_detgrade[i]);
   }
 
@@ -197,6 +197,7 @@ bool staveanalysis(int year, int thisweek){
   }
   yieldOL = (TH1F*)cumStavevstime[0]->Clone("yield_OL");
   yieldOL->Reset();
+  cout<<"bin num: "<<cumOLStavevstime_detgrade->GetBinContent(cumOLStavevstime_detgrade->GetNbinsX())<<"   bin den: "<<cumOLStavevstime->GetBinContent(cumOLStavevstime->GetNbinsX())<<endl;
   yieldOL->Divide(cumOLStavevstime_detgrade, cumOLStavevstime, 1., 1.);
   yieldOL->Scale(100.);
 
